@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash2 } from "lucide-react";
+import { Check, Pencil, Trash2 } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
@@ -19,9 +19,15 @@ interface TaskCardProps {
   task: Task;
   onEdit: (task: Task) => void;
   onDelete: (taskId: string) => void;
+  onComplete: (taskId: string) => void;
 }
 
-export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
+export function TaskCard({
+  task,
+  onEdit,
+  onDelete,
+  onComplete,
+}: TaskCardProps) {
   const [isDisabled, setIsDisabled] = useState(false);
   const {
     attributes,
@@ -54,66 +60,62 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
   };
 
   return (
-    <div className="relative group">
-      <Card
-        ref={setNodeRef}
-        style={style}
-        className={`bg-white dark:bg-gray-800 ${
-          isDragging ? "shadow-2xl scale-105" : ""
-        }`}
-        {...attributes}
-        {...listeners}
-      >
-        <CardHeader className="p-4">
-          <CardTitle className="text-lg font-semibold">{task.title}</CardTitle>
-        </CardHeader>
-        <CardContent className="p-4 pt-0">
-          <CardDescription>{task.description}</CardDescription>
-        </CardContent>
-        <CardFooter
-          onMouseEnter={() => setIsDisabled(true)}
-          onMouseLeave={() => setIsDisabled(false)}
+    console.log("TaskCard", task),
+    (
+      <div className="relative group">
+        <Card
+          ref={setNodeRef}
+          style={style}
+          className={`bg-white dark:bg-gray-800  ${
+            isDragging ? "shadow-2xl scale-105" : ""
+          }`}
+          {...attributes}
+          {...listeners}
         >
-          <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleEdit}
-              className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <Pencil className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleDelete}
-              className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        </CardFooter>
-      </Card>
+          <CardHeader className="">
+            <CardTitle className="text-lg font-semibold">
+              {task.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="">
+            <CardDescription>{task.description}</CardDescription>
+          </CardContent>
+          <CardFooter
+            onMouseEnter={() => setIsDisabled(true)}
+            onMouseLeave={() => setIsDisabled(false)}
+          >
+            <div className="flex opacity-0 group-hover:opacity-100 transition-opacity gap-4">
+              {task.quadrant !== "done" && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onComplete(task.id)}
+                  className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <Check className="h-4 w-4" />
+                </Button>
+              )}
 
-      {/* Overlay buttons */}
-      <div className="absolute top-2 right-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        <Button
-          variant="secondary"
-          size="icon"
-          onClick={handleEdit}
-          className="h-8 w-8 bg-white/90 hover:bg-white dark:bg-gray-700/90 dark:hover:bg-gray-700"
-        >
-          <Pencil className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="secondary"
-          size="icon"
-          onClick={handleDelete}
-          className="h-8 w-8 bg-white/90 hover:bg-white dark:bg-gray-700/90 dark:hover:bg-gray-700"
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleEdit}
+                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleDelete}
+                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardFooter>
+        </Card>
       </div>
-    </div>
+    )
   );
 }
