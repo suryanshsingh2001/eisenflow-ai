@@ -47,6 +47,18 @@ export default function Home() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
+
+
+
+  const handleClearAll = () => {
+    localStorage.removeItem("eisenhowerTasks");
+    setQuadrants(initialQuadrants);
+  };
+
+
+
+
+
   useEffect(() => {
     const savedTasks = localStorage.getItem("eisenhowerTasks");
     if (savedTasks) {
@@ -222,7 +234,16 @@ export default function Home() {
               ) : null}
             </DragOverlay>
           </DndContext>
+
+
+
+          <div className="">
+            <Button variant={"ghost"} className="w-full" onClick={handleClearAll}> 
+              Clear All
+            </Button>
+          </div>
         </div>
+
 
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <DialogContent>
