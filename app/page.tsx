@@ -89,12 +89,15 @@ export default function Home() {
     const { active, over } = event;
     setActiveTask(null);
     
-    if (!over) return;
+    if (!over) return; // Early return without any changes if dropped on nothing
 
     const activeQuadrant = quadrants.find(q => q.tasks.some(t => t.id === active.id));
     const overQuadrant = quadrants.find(q => q.id === over.id);
 
     if (!activeQuadrant || !overQuadrant) return;
+
+    // Only proceed with changes if the task is dropped on a different quadrant
+    if (activeQuadrant.id === overQuadrant.id) return;
 
     const activeTask = activeQuadrant.tasks.find(t => t.id === active.id);
     if (!activeTask) return;
@@ -206,6 +209,7 @@ export default function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <DndContext 
+            
             collisionDetection={closestCenter} 
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}

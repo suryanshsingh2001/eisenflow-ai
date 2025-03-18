@@ -40,6 +40,8 @@ export function Quadrant({ quadrant, onAddTask, onEditTask, onDeleteTask }: Quad
               />
             ))}
           </SortableContext>
+
+          
         </div>
       </CardContent>
     </Card>
