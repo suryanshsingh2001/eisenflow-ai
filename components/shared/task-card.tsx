@@ -14,6 +14,7 @@ import { Check, Pencil, Trash2 } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
+import { AnimatedContainer } from "./animated-container";
 
 interface TaskCardProps {
   task: Task;
@@ -62,24 +63,24 @@ export function TaskCard({
   return (
     console.log("TaskCard", task),
     (
-      <div className="relative group">
+      <AnimatedContainer animation="scale" delay={0.2} className="relative group">
         <Card
+          
           ref={setNodeRef}
           style={style}
-          className={`bg-white dark:bg-gray-800  ${
+          className={`  ${
             isDragging ? "shadow-2xl scale-105" : ""
           }`}
           {...attributes}
           {...listeners}
         >
-          <CardHeader className="">
-            <CardTitle className="text-lg font-semibold">
+          <CardHeader >
+            <CardTitle className="text-md font-semibold">
               {task.title}
             </CardTitle>
+            <CardDescription className="text-sm">{task.description}</CardDescription>
           </CardHeader>
-          <CardContent className="">
-            <CardDescription>{task.description}</CardDescription>
-          </CardContent>
+         
           <CardFooter
             onMouseEnter={() => setIsDisabled(true)}
             onMouseLeave={() => setIsDisabled(false)}
@@ -115,7 +116,7 @@ export function TaskCard({
             </div>
           </CardFooter>
         </Card>
-      </div>
+      </AnimatedContainer>
     )
   );
 }

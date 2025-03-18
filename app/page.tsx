@@ -29,6 +29,7 @@ import { Task, Quadrant as QuadrantType } from "@/lib/types";
 import { categorizeTasks } from "@/lib/ai";
 import { Wand2 } from "lucide-react";
 import { Quadrant } from "@/components/shared/quadrant";
+import { QuadrantGridSkeleton } from "@/components/shared/loader";
 
 const initialQuadrants: QuadrantType[] = [
   {
@@ -68,6 +69,7 @@ export default function Home() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleClearAll = () => {
     localStorage.removeItem("eisenhowerTasks");
@@ -193,6 +195,7 @@ export default function Home() {
 
     try {
       //use api
+      setLoading(true);
       const response = await fetch("/api/ai", {
         method: "POST",
         headers: {
@@ -230,22 +233,24 @@ export default function Home() {
       saveTasks(updatedQuadrants);
     } catch (error) {
       console.error("Error sorting tasks with AI:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const onCompleteTask = (taskId: string) => {
     // Find the task and its quadrant
-    const sourceQuadrant = quadrants.find(q => 
-      q.tasks.some(t => t.id === taskId)
+    const sourceQuadrant = quadrants.find((q) =>
+      q.tasks.some((t) => t.id === taskId)
     );
-    const task = sourceQuadrant?.tasks.find(t => t.id === taskId);
+    const task = sourceQuadrant?.tasks.find((t) => t.id === taskId);
 
     if (!task) return;
 
     // Create updated quadrants with the task moved to "done"
-    const updatedQuadrants = quadrants.map(q => {
+    const updatedQuadrants = quadrants.map((q) => {
       if (q.id === sourceQuadrant?.id) {
-        return { ...q, tasks: q.tasks.filter(t => t.id !== taskId) };
+        return { ...q, tasks: q.tasks.filter((t) => t.id !== taskId) };
       }
       if (q.id === "done") {
         return { ...q, tasks: [...q.tasks, { ...task, quadrant: "done" }] };
@@ -271,61 +276,67 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <DndContext
-            collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-          >
-            {quadrants.slice(0, 4).map((quadrant) => (
-              <Quadrant
-                key={quadrant.id}
-                quadrant={quadrant}
-                onAddTask={(task) => handleAddTask(quadrant.id, task)}
-                onEditTask={handleEditTask}
-                onDeleteTask={handleDeleteTask}
-                onCompleteTask={onCompleteTask}
-              />
-            ))}
+          {loading ? (
+            <QuadrantGridSkeleton />
+          ) : (
+            <>
+              <DndContext
+                collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+              >
+                {quadrants.slice(0, 4).map((quadrant) => (
+                  <Quadrant
+                    key={quadrant.id}
+                    quadrant={quadrant}
+                    onAddTask={(task) => handleAddTask(quadrant.id, task)}
+                    onEditTask={handleEditTask}
+                    onDeleteTask={handleDeleteTask}
+                    onCompleteTask={onCompleteTask}
+                  />
+                ))}
 
-            <div className="col-span-2 mx-auto w-full max-w-2xl">
-              <Quadrant
-                quadrant={quadrants[4]}
-                onAddTask={(task) => handleAddTask(quadrants[4].id, task)}
-                onEditTask={handleEditTask}
-                onCompleteTask={onCompleteTask}
-                onDeleteTask={handleDeleteTask}
-              />
-            </div>
-
-            <DragOverlay>
-              {activeTask ? (
-                <div className="w-full max-w-md">
-                  <Card className="bg-white dark:bg-gray-800 shadow-2xl">
-                    <CardHeader className="p-4">
-                      <CardTitle className="text-lg font-semibold">
-                        {activeTask.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-4 pt-0">
-                      <CardDescription>
-                        {activeTask.description}
-                      </CardDescription>
-                    </CardContent>
-                  </Card>
+                <div className="col-span-2 mx-auto w-full max-w-2xl">
+                  <Quadrant
+                    quadrant={quadrants[4]}
+                    onAddTask={(task) => handleAddTask(quadrants[4].id, task)}
+                    onEditTask={handleEditTask}
+                    onCompleteTask={onCompleteTask}
+                    onDeleteTask={handleDeleteTask}
+                  />
                 </div>
-              ) : null}
-            </DragOverlay>
-          </DndContext>
 
-          <div className="">
-            <Button
-              variant={"ghost"}
-              className="w-full"
-              onClick={handleClearAll}
-            >
-              Clear All
-            </Button>
-          </div>
+                <DragOverlay>
+                  {activeTask ? (
+                    <div className="w-full max-w-md">
+                      <Card className="bg-white dark:bg-gray-800 shadow-2xl">
+                        <CardHeader className="p-4">
+                          <CardTitle className="text-lg font-semibold">
+                            {activeTask.title}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-4 pt-0">
+                          <CardDescription>
+                            {activeTask.description}
+                          </CardDescription>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  ) : null}
+                </DragOverlay>
+              </DndContext>
+
+              <div className="">
+                <Button
+                  variant={"ghost"}
+                  className="w-full"
+                  onClick={handleClearAll}
+                >
+                  Clear All
+                </Button>
+              </div>
+            </>
+          )}
         </div>
 
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
