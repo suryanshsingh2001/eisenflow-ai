@@ -7,7 +7,6 @@ import {
 } from "@dnd-kit/sortable";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
@@ -44,9 +43,7 @@ export function Quadrant({
         <CardHeader>
           <CardTitle className="text-xl font-bold">{quadrant.title}</CardTitle>
           <CardDescription>{quadrant.description}</CardDescription>
-          <CardAction>
             {taskCount} task{taskCount !== 1 ? "s" : ""}
-          </CardAction>
         </CardHeader>
         <CardContent>
           <div className="mb-4">
