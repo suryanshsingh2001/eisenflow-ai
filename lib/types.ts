@@ -7,6 +7,7 @@ export interface Task {
   }
   
   export interface Quadrant {
+    icon : React.ReactNode;
     id: 'important-urgent' | 'important-not-urgent' | 'not-important-urgent' | 'not-important-not-urgent' | "done";
     title: string;
     description: string;

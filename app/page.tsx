@@ -8,7 +8,6 @@ import {
   DragOverlay,
   closestCenter,
 } from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,25 +26,37 @@ import {
 } from "@/components/ui/card";
 import { Task, Quadrant as QuadrantType } from "@/lib/types";
 import { categorizeTasks } from "@/lib/ai";
-import { Wand2 } from "lucide-react";
+import {
+  AlertCircle,
+  CalendarRange,
+  Check,
+  CheckCircle2,
+  Trash2,
+  Users2,
+  Wand2,
+} from "lucide-react";
 import { Quadrant } from "@/components/shared/quadrant";
 import { QuadrantGridSkeleton } from "@/components/shared/loader";
+import RecommendationDialog from "@/components/shared/recommendation-dialog";
 
 const initialQuadrants: QuadrantType[] = [
   {
     id: "important-urgent",
+    icon: <AlertCircle className="w-6 h-6 text-primary" />,
     title: "Important & Urgent",
     description: "Do these tasks immediately",
     tasks: [],
   },
   {
     id: "important-not-urgent",
+    icon: <CalendarRange className="w-6 h-6 text-purple-600" />,
     title: "Important & Not Urgent",
     description: "Schedule these tasks",
     tasks: [],
   },
   {
     id: "not-important-urgent",
+    icon: <Users2 className="w-6 h-6 text-foreground" />,
     title: "Not Important & Urgent",
     description: "Delegate these tasks",
     tasks: [],
@@ -53,11 +64,13 @@ const initialQuadrants: QuadrantType[] = [
   {
     id: "not-important-not-urgent",
     title: "Not Important & Not Urgent",
+    icon: <Trash2 className="w-6 h-6 text-destructive" />,
     description: "Eliminate these tasks",
     tasks: [],
   },
   {
     id: "done",
+    icon: <CheckCircle2 className="w-6 h-6 text-green-500" />,
     title: "Done",
     description: "Completed tasks",
     tasks: [],
@@ -70,6 +83,7 @@ export default function Home() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(false);
+  const [reasonings, setReasonings] = useState([]);
 
   const handleClearAll = () => {
     localStorage.removeItem("eisenhowerTasks");
@@ -187,11 +201,20 @@ export default function Home() {
   };
 
   const handleAISort = async () => {
+
+
     const allTasks = quadrants.flatMap((q) => q.tasks);
     const taskData = allTasks.map(({ title, description }) => ({
       title,
       description,
     }));
+
+
+    //look for empty tasks
+    if (taskData.length === 0) {
+      alert("Please add some tasks to categorize with AI");
+      return;
+    }
 
     try {
       //use api
@@ -208,6 +231,11 @@ export default function Home() {
       const categorizedTasks = results.map(
         (result: { quadrant: string; reasoning: string }) => result
       );
+
+      const responseReasonings = categorizedTasks.map(
+        (result: { quadrant: string; reasoning: string }) => result.reasoning
+      );
+      setReasonings(responseReasonings);
 
       console.log(categorizedTasks);
 
@@ -263,119 +291,133 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
-            Eisenhower Matrix
-          </h1>
-          <Button onClick={handleAISort} className="flex items-center">
-            <Wand2 className="h-4 w-4" />
-            Ask AI
-          </Button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {loading ? (
-            <QuadrantGridSkeleton />
-          ) : (
-            <>
-              <DndContext
-                collisionDetection={closestCenter}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
+    <>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Eisenhower Matrix
+            </h2>
+            <div className="flex gap-2">
+              <Button  onClick={handleAISort} className="flex items-center">
+                <Wand2 className="h-4 w-4 " />
+                Ask AI
+              </Button>
+              <Button
+                onClick={handleClearAll}
+                variant="outline"
+                className="flex items-center"
               >
-                {quadrants.slice(0, 4).map((quadrant) => (
-                  <Quadrant
-                    key={quadrant.id}
-                    quadrant={quadrant}
-                    onAddTask={(task) => handleAddTask(quadrant.id, task)}
-                    onEditTask={handleEditTask}
-                    onDeleteTask={handleDeleteTask}
-                    onCompleteTask={onCompleteTask}
-                  />
-                ))}
+                <Trash2 className="h-4 w-4 2" />
+                Clear All
+              </Button>
+            </div>
+          </div>
 
-                <div className="col-span-2 mx-auto w-full max-w-2xl">
-                  <Quadrant
-                    quadrant={quadrants[4]}
-                    onAddTask={(task) => handleAddTask(quadrants[4].id, task)}
-                    onEditTask={handleEditTask}
-                    onCompleteTask={onCompleteTask}
-                    onDeleteTask={handleDeleteTask}
-                  />
-                </div>
-
-                <DragOverlay>
-                  {activeTask ? (
-                    <div className="w-full max-w-md">
-                      <Card className="bg-white dark:bg-gray-800 shadow-2xl">
-                        <CardHeader className="p-4">
-                          <CardTitle className="text-lg font-semibold">
-                            {activeTask.title}
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-4 pt-0">
-                          <CardDescription>
-                            {activeTask.description}
-                          </CardDescription>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  ) : null}
-                </DragOverlay>
-              </DndContext>
-
-              <div className="">
-                <Button
-                  variant={"ghost"}
-                  className="w-full"
-                  onClick={handleClearAll}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {loading ? (
+              <QuadrantGridSkeleton />
+            ) : (
+              <>
+                <DndContext
+                  collisionDetection={closestCenter}
+                  onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
                 >
-                  Clear All
-                </Button>
-              </div>
-            </>
-          )}
-        </div>
+                  {quadrants.slice(0, 4).map((quadrant) => (
+                    <Quadrant
+                      key={quadrant.id}
+                      icon={quadrant.icon}
+                      quadrant={quadrant}
+                      onAddTask={(task) => handleAddTask(quadrant.id, task)}
+                      onEditTask={handleEditTask}
+                      onDeleteTask={handleDeleteTask}
+                      onCompleteTask={onCompleteTask}
+                    />
+                  ))}
 
-        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Task</DialogTitle>
-            </DialogHeader>
-            {editingTask && (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  const formData = new FormData(e.currentTarget);
-                  handleUpdateTask({
-                    ...editingTask,
-                    title: formData.get("title") as string,
-                    description: formData.get("description") as string,
-                  });
-                }}
-                className="space-y-4"
-              >
-                <Input
-                  name="title"
-                  defaultValue={editingTask.title}
-                  placeholder="Task title"
-                />
-                <Textarea
-                  name="description"
-                  defaultValue={editingTask.description}
-                  placeholder="Task description"
-                  rows={3}
-                />
-                <Button type="submit" className="w-full">
-                  Update Task
-                </Button>
-              </form>
+                  <div className="col-span-2 mx-auto w-full max-w-2xl">
+                    <Quadrant
+                      icon={quadrants[4].icon}
+                      quadrant={quadrants[4]}
+                      onAddTask={(task) => handleAddTask(quadrants[4].id, task)}
+                      onEditTask={handleEditTask}
+                      onCompleteTask={onCompleteTask}
+                      onDeleteTask={handleDeleteTask}
+                    />
+                  </div>
+
+                  <DragOverlay>
+                    {activeTask ? (
+                      <div className="w-full max-w-md">
+                        <Card className="bg-white dark:bg-gray-800 shadow-2xl">
+                          <CardHeader className="p-4">
+                            <CardTitle className="text-lg font-semibold">
+                              {activeTask.title}
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="p-4 pt-0">
+                            <CardDescription>
+                              {activeTask.description}
+                            </CardDescription>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    ) : null}
+                  </DragOverlay>
+                </DndContext>
+
+                
+              </>
             )}
-          </DialogContent>
-        </Dialog>
+          </div>
+
+          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Edit Task</DialogTitle>
+              </DialogHeader>
+              {editingTask && (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.currentTarget);
+                    handleUpdateTask({
+                      ...editingTask,
+                      title: formData.get("title") as string,
+                      description: formData.get("description") as string,
+                    });
+                  }}
+                  className="space-y-4"
+                >
+                  <Input
+                    name="title"
+                    defaultValue={editingTask.title}
+                    placeholder="Task title"
+                  />
+                  <Textarea
+                    name="description"
+                    defaultValue={editingTask.description}
+                    placeholder="Task description"
+                    rows={3}
+                  />
+                  <Button type="submit" className="w-full">
+                    Update Task
+                  </Button>
+                </form>
+              )}
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
-    </div>
+
+      <RecommendationDialog
+        reasonings={reasonings}
+        open={reasonings.length > 0}
+        onOpenChange={(open: boolean) => {
+          if (!open) setReasonings([]);
+        }}
+      />
+    </>
   );
 }

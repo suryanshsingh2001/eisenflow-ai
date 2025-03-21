@@ -16,9 +16,12 @@ import { Quadrant as QuadrantType, Task } from "@/lib/types";
 import { TaskForm } from "./task-form";
 import { TaskCard } from "./task-card";
 import { AnimatedContainer } from "./animated-container";
+import { Icon } from "lucide-react";
+import React from "react";
 
 interface QuadrantProps {
   quadrant: QuadrantType;
+  icon: React.ReactNode;
   onAddTask: (task: Omit<Task, "id" | "createdAt">) => void;
   onEditTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
@@ -31,6 +34,7 @@ export function Quadrant({
   onEditTask,
   onDeleteTask,
   onCompleteTask,
+  icon,
 }: QuadrantProps) {
   const { setNodeRef } = useDroppable({
     id: quadrant.id,
@@ -40,31 +44,36 @@ export function Quadrant({
   return (
     <AnimatedContainer animation="slide" className="h-full">
       <Card className="h-full">
-        <CardHeader>
-          <CardTitle className="text-xl font-bold">{quadrant.title}</CardTitle>
+        <CardHeader className="relative">
+          <div className="flex items-center gap-2">
+        <CardTitle className="text-xl font-bold">{quadrant.title}</CardTitle>
+        {icon}
+          </div>
+          <div className="absolute right-6 top-6">
+        {taskCount} task{taskCount !== 1 ? "s" : ""}
+          </div>
           <CardDescription>{quadrant.description}</CardDescription>
-            {taskCount} task{taskCount !== 1 ? "s" : ""}
         </CardHeader>
         <CardContent>
           <div className="mb-4">
-            <TaskForm onSubmit={onAddTask} initialQuadrant={quadrant.id} />
+        <TaskForm onSubmit={onAddTask} initialQuadrant={quadrant.id} />
           </div>
 
           <div ref={setNodeRef} className="space-y-5">
-            <SortableContext
-              items={quadrant.tasks}
-              strategy={verticalListSortingStrategy}
-            >
-              {quadrant.tasks.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  onEdit={onEditTask}
-                  onDelete={onDeleteTask}
-                  onComplete={onCompleteTask}
-                />
-              ))}
-            </SortableContext>
+        <SortableContext
+          items={quadrant.tasks}
+          strategy={verticalListSortingStrategy}
+        >
+          {quadrant.tasks.map((task) => (
+            <TaskCard
+          key={task.id}
+          task={task}
+          onEdit={onEditTask}
+          onDelete={onDeleteTask}
+          onComplete={onCompleteTask}
+            />
+          ))}
+        </SortableContext>
           </div>
         </CardContent>
       </Card>

@@ -41,12 +41,12 @@ export function TaskForm({ onSubmit, initialQuadrant }: TaskFormProps) {
           Add Task
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="">
         <DialogHeader>
           <DialogTitle>Add New Task</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-4">
             <Input
               placeholder="Task title"
               value={title}

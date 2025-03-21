@@ -63,29 +63,33 @@ export function TaskCard({
   return (
     console.log("TaskCard", task),
     (
-      <AnimatedContainer animation="scale" delay={0.2} className="relative group">
+      <AnimatedContainer
+        animation="scale"
+        delay={0.2}
+        className="relative group"
+      >
         <Card
-          
           ref={setNodeRef}
           style={style}
-          className={`  ${
-            isDragging ? "shadow-2xl scale-105" : ""
-          }`}
+          className={`  ${isDragging ? "shadow-2xl scale-105" : ""}`}
           {...attributes}
           {...listeners}
         >
-          <CardHeader >
+          <CardHeader>
             <CardTitle className="text-md font-semibold">
               {task.title}
             </CardTitle>
-            <CardDescription className="text-sm">{task.description}</CardDescription>
+            <CardDescription className="text-sm">
+              {task.description}
+            </CardDescription>
           </CardHeader>
-         
-          <CardFooter
+
+          <CardContent
+            className="justify-end invisible group-hover:visible"
             onMouseEnter={() => setIsDisabled(true)}
             onMouseLeave={() => setIsDisabled(false)}
           >
-            <div className="flex opacity-0 group-hover:opacity-100 transition-opacity gap-4">
+            <div className="flex gap-4">
               {task.quadrant !== "done" && (
                 <Button
                   variant="ghost"
@@ -114,7 +118,7 @@ export function TaskCard({
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>
-          </CardFooter>
+          </CardContent>
         </Card>
       </AnimatedContainer>
     )
