@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import axios from "axios";
 import {
   DndContext,
   DragEndEvent,
@@ -38,6 +39,7 @@ import {
 import { Quadrant } from "@/components/shared/quadrant";
 import { QuadrantGridSkeleton } from "@/components/shared/loader";
 import RecommendationDialog from "@/components/shared/recommendation-dialog";
+import { toast } from "sonner";
 
 const initialQuadrants: QuadrantType[] = [
   {
@@ -219,15 +221,13 @@ export default function Home() {
     try {
       //use api
       setLoading(true);
-      const response = await fetch("/api/ai", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ tasks: taskData }),
-      });
+      const response = await axios.post("/api/ai", { tasks: taskData });
 
-      const { results } = await response.json();
+      const { results } = response.data
+      if(!results){
+        console.error("No results from AI categorization")
+        return;
+      }
       const categorizedTasks = results.map(
         (result: { quadrant: string; reasoning: string }) => result
       );
@@ -260,6 +260,14 @@ export default function Home() {
       setQuadrants(updatedQuadrants);
       saveTasks(updatedQuadrants);
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 429) {
+        toast.error(
+          error.response.data.text || "You have exceeded the rate limit."
+        );
+        return;
+      } else {
+        alert("An error occurred while sorting tasks. Please try again.");
+      }
       console.error("Error sorting tasks with AI:", error);
     } finally {
       setLoading(false);
@@ -414,9 +422,9 @@ export default function Home() {
       <RecommendationDialog
         reasonings={reasonings}
         open={reasonings.length > 0}
-        onOpenChange={(open: boolean) => {
+        onOpenChange={(open) => {
           if (!open) setReasonings([]);
-        }}
+        }}  
       />
     </>
   );
