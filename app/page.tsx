@@ -123,30 +123,37 @@ export default function Home() {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveTask(null);
-
-    if (!over) return; // Early return without any changes if dropped on nothing
-
+  
+    if (!over) return;
+  
     const activeQuadrant = quadrants.find((q) =>
       q.tasks.some((t) => t.id === active.id)
     );
-    const overQuadrant = quadrants.find((q) => q.id === over.id);
-
-    if (!activeQuadrant || !overQuadrant) return;
-
-    // Only proceed with changes if the task is dropped on a different quadrant
-    if (activeQuadrant.id === overQuadrant.id) return;
-
+  
+    if (!activeQuadrant) return;
+  
     const activeTask = activeQuadrant.tasks.find((t) => t.id === active.id);
     if (!activeTask) return;
+  
+    // First check if the over.id matches any quadrant ID directly
+    const targetQuadrant = quadrants.find(q => q.id === over.id);
+    const overQuadrantId = targetQuadrant 
+      ? over.id 
+      : quadrants.find(q => q.tasks.some(t => t.id === over.id))?.id;
+  
+    if (!overQuadrantId) return;
+
+    // Only proceed if we're actually moving to a different quadrant
+    if (activeQuadrant.id === overQuadrantId) return;
 
     const updatedQuadrants = quadrants.map((q) => {
       if (q.id === activeQuadrant.id) {
         return { ...q, tasks: q.tasks.filter((t) => t.id !== active.id) };
       }
-      if (q.id === overQuadrant.id) {
+      if (q.id === overQuadrantId) {
         return {
           ...q,
-          tasks: [...q.tasks, { ...activeTask, quadrant: overQuadrant.id }],
+          tasks: [...q.tasks, { ...activeTask, quadrant: overQuadrantId }],
         };
       }
       return q;
@@ -203,14 +210,11 @@ export default function Home() {
   };
 
   const handleAISort = async () => {
-
-
     const allTasks = quadrants.flatMap((q) => q.tasks);
     const taskData = allTasks.map(({ title, description }) => ({
       title,
       description,
     }));
-
 
     //look for empty tasks
     if (taskData.length === 0) {
@@ -223,9 +227,9 @@ export default function Home() {
       setLoading(true);
       const response = await axios.post("/api/ai", { tasks: taskData });
 
-      const { results } = response.data
-      if(!results){
-        console.error("No results from AI categorization")
+      const { results } = response.data;
+      if (!results) {
+        console.error("No results from AI categorization");
         return;
       }
       const categorizedTasks = results.map(
@@ -307,7 +311,7 @@ export default function Home() {
               Eisenhower Matrix
             </h2>
             <div className="flex gap-2">
-              <Button  onClick={handleAISort} className="flex items-center">
+              <Button onClick={handleAISort} className="flex items-center">
                 <Wand2 className="h-4 w-4 " />
                 Ask AI
               </Button>
@@ -374,8 +378,6 @@ export default function Home() {
                     ) : null}
                   </DragOverlay>
                 </DndContext>
-
-                
               </>
             )}
           </div>
@@ -424,7 +426,7 @@ export default function Home() {
         open={reasonings.length > 0}
         onOpenChange={(open) => {
           if (!open) setReasonings([]);
-        }}  
+        }}
       />
     </>
   );
