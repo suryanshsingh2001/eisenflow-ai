@@ -33,6 +33,8 @@ import {
 import { Task, Quadrant as QuadrantType } from "@/lib/types";
 import {
   AlertCircle,
+  BadgeInfo,
+  Book,
   CalendarRange,
   Check,
   CheckCircle2,
@@ -192,6 +194,8 @@ export default function Home() {
   const [quadrants, setQuadrants] = useState<QuadrantType[]>(initialQuadrants);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isRecommendationDialogOpen, setIsRecommendationDialogOpen] =
+    useState(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(false);
   const [reasonings, setReasonings] = useState([]);
@@ -201,6 +205,10 @@ export default function Home() {
   const handleClearAll = () => {
     localStorage.removeItem("eisenhowerTasks");
     setQuadrants(emptyQuadrants);
+
+    // Clear reasonings
+    localStorage.removeItem("reasonings");
+    setReasonings([]);
   };
 
   // Inside your Home component, add these before the return statement
@@ -213,19 +221,23 @@ export default function Home() {
     },
   });
 
-const touchSensor = useSensor(TouchSensor, {
-  // Increase delay to prevent scroll conflicts
-  activationConstraint: {
-    delay: 250,
-    tolerance: 5,
-  },
-});
+  const touchSensor = useSensor(TouchSensor, {
+    // Increase delay to prevent scroll conflicts
+    activationConstraint: {
+      delay: 250,
+      tolerance: 5,
+    },
+  });
 
-const sensors = useSensors(mouseSensor, touchSensor);
-
+  const sensors = useSensors(mouseSensor, touchSensor);
 
   useEffect(() => {
     const savedTasks = localStorage.getItem("eisenhowerTasks");
+    const savedReasonings = localStorage.getItem("reasonings");
+    if (savedReasonings) {
+      const reasonings = JSON.parse(savedReasonings);
+      setReasonings(reasonings);
+    }
     if (savedTasks) {
       const tasks: Task[] = JSON.parse(savedTasks);
       const updatedQuadrants = initialQuadrants.map((q) => ({
@@ -233,6 +245,7 @@ const sensors = useSensors(mouseSensor, touchSensor);
         tasks: tasks.filter((t) => t.quadrant === q.id),
       }));
       setQuadrants(updatedQuadrants);
+
     }
   }, []);
 
@@ -350,7 +363,7 @@ const sensors = useSensors(mouseSensor, touchSensor);
 
     //look for empty tasks
     if (taskData.length < 2) {
-      toast.error("It seems you have no or not enough tasks to categorize.");
+      toast.error("It seems you don't have enough tasks to categorize.");
       return;
     }
 
@@ -374,6 +387,8 @@ const sensors = useSensors(mouseSensor, touchSensor);
         (result: { quadrant: string; reasoning: string }) => result.reasoning
       );
       setReasonings(responseReasonings);
+      localStorage.setItem("reasonings", JSON.stringify(responseReasonings));
+      setIsRecommendationDialogOpen(true);
 
       console.log(categorizedTasks);
 
@@ -391,6 +406,7 @@ const sensors = useSensors(mouseSensor, touchSensor);
           targetQuadrant.tasks.push({
             ...task,
             quadrant: suggestion.quadrant as Task["quadrant"],
+            reasoning: suggestion.reasoning,
           });
         }
       });
@@ -517,7 +533,7 @@ const sensors = useSensors(mouseSensor, touchSensor);
             ) : (
               <>
                 <DndContext
-                sensors={sensors}
+                  sensors={sensors}
                   collisionDetection={closestCenter}
                   onDragStart={handleDragStart}
                   onDragEnd={handleDragEnd}
@@ -611,13 +627,21 @@ const sensors = useSensors(mouseSensor, touchSensor);
           </Dialog>
         </div>
       </div>
+      {reasonings.length > 0 && (
+        <Button
+          onClick={() => setIsRecommendationDialogOpen(true)}
+          variant="default"
+          className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 shadow-lg z-30"
+        >
+          <BadgeInfo className="h-4 w-4 text-yellow-400" />
+          Recommendations
+        </Button>
+      )}
 
       <RecommendationDialog
         reasonings={reasonings}
-        open={reasonings.length > 0}
-        onOpenChange={(open) => {
-          if (!open) setReasonings([]);
-        }}
+        open={isRecommendationDialogOpen}
+        onOpenChange={setIsRecommendationDialogOpen}
       />
     </>
   );

@@ -4,6 +4,7 @@ export interface Task {
     description: string;
     quadrant: 'important-urgent' | 'important-not-urgent' | 'not-important-urgent' | 'not-important-not-urgent' | "done";
     createdAt: string;
+    reasoning?: string;
   }
   
   export interface Quadrant {

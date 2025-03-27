@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, Pencil, Trash2 } from "lucide-react";
+import { Check, Grid2X2, Grip, GripVertical, InfoIcon, Pencil, Trash2 } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface TaskCardProps {
   task: Task;
@@ -36,7 +37,6 @@ export function TaskCard({
   onDelete,
   onComplete,
 }: TaskCardProps) {
-  const [isDisabled, setIsDisabled] = useState(false);
   const {
     attributes,
     listeners,
@@ -44,13 +44,14 @@ export function TaskCard({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: task.id, disabled: isDisabled });
+  } = useSortable({ 
+    id: task.id,
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-    cursor: "grab",
     position: "relative" as const,
     zIndex: isDragging ? 50 : 1,
   };
@@ -68,36 +69,54 @@ export function TaskCard({
   };
 
   return (
-    console.log("TaskCard", task),
-    (
-      <AnimatedContainer
-        animation="scale"
-        delay={0.2}
-        className="relative group"
+    <AnimatedContainer
+      animation="scale"
+      delay={0.2}
+      className="relative group"
+    >
+      <Card
+        ref={setNodeRef}
+        style={style}
+        className={`${isDragging ? "shadow-2xl scale-105" : ""}`}
       >
-        <Card
-          ref={setNodeRef}
-          style={style}
-          className={`${isDragging ? "shadow-2xl scale-105" : ""} draggable`}
-          {...attributes}
-          {...listeners}
-        >
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle className="text-md font-semibold">
+        <CardHeader className="flex flex-row items-center justify-between space-x-2">
+          <div className="flex items-start gap-2 flex-1 min-w-0">
+            <div 
+              className="cursor-grab mt-1 touch-none"
+              {...attributes}
+              {...listeners}
+            >
+              <Grip className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <CardTitle className="text-md font-semibold truncate">
                 {task.title}
               </CardTitle>
-              <CardDescription className="text-sm">
+              <CardDescription className="text-sm line-clamp-2">
                 {task.description}
               </CardDescription>
             </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {task.reasoning && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <InfoIcon className="h-4 w-4 text-blue-600" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs">{task.reasoning}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+
             <DropdownMenu>
-              <DropdownMenuTrigger
-                asChild
-            
-              >
-                <Button 
-                variant="ghost" size="icon">
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -118,9 +137,9 @@ export function TaskCard({
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </CardHeader>
-        </Card>
-      </AnimatedContainer>
-    )
+          </div>
+        </CardHeader>
+      </Card>
+    </AnimatedContainer>
   );
 }
