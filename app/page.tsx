@@ -9,6 +9,10 @@ import {
   DragStartEvent,
   DragOverlay,
   closestCenter,
+  TouchSensor,
+  MouseSensor,
+  useSensor,
+  useSensors,
 } from "@dnd-kit/core";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,6 +48,109 @@ import { toast } from "sonner";
 import Image from "next/image";
 
 const initialQuadrants: QuadrantType[] = [
+  {
+    id: "important-urgent",
+    icon: <AlertCircle className="w-6 h-6 text-primary" />,
+    title: "Important & Urgent",
+    description: "Do these tasks immediately",
+    tasks: [
+      {
+        id: "mix-3",
+        title: "Production Server Down",
+        description:
+          "Main application server is experiencing intermittent outages affecting user experience.",
+        quadrant: "important-urgent",
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: "mix-8",
+        title: "Critical Security Patch",
+        description:
+          "Apply urgent security patch to fix vulnerability in authentication system.",
+        quadrant: "important-urgent",
+        createdAt: new Date().toISOString(),
+      },
+    ],
+  },
+  {
+    id: "important-not-urgent",
+    icon: <CalendarRange className="w-6 h-6 text-purple-600" />,
+    title: "Important & Not Urgent",
+    description: "Schedule these tasks",
+    tasks: [
+      {
+        id: "mix-2",
+        title: "Learning New Framework",
+        description:
+          "Team needs to learn Next.js for upcoming project, but no immediate deadline.",
+        quadrant: "important-not-urgent",
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: "mix-6",
+        title: "Strategic Planning Session",
+        description:
+          "Define next quarter technical roadmap and resource allocation.",
+        quadrant: "important-not-urgent",
+        createdAt: new Date().toISOString(),
+      },
+    ],
+  },
+  {
+    id: "not-important-urgent",
+    icon: <Users2 className="w-6 h-6 text-foreground" />,
+    title: "Not Important & Urgent",
+    description: "Delegate these tasks",
+    tasks: [
+      {
+        id: "mix-1",
+        title: "Prepare Weekly Project Report",
+        description:
+          "Could be delegated but team considers it critical. Compile statistics and achievements from last sprint.",
+        quadrant: "not-important-urgent",
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: "mix-5",
+        title: "Code Review Backlog",
+        description:
+          "Several pull requests pending review, blocking team progress.",
+        quadrant: "not-important-urgent",
+        createdAt: new Date().toISOString(),
+      },
+    ],
+  },
+  {
+    id: "not-important-not-urgent",
+    title: "Not Important & Not Urgent",
+    icon: <Trash2 className="w-6 h-6 text-destructive" />,
+    description: "Eliminate these tasks",
+    tasks: [
+      {
+        id: "mix-4",
+        title: "Office Plant Watering",
+        description: "Need to water office plants before they die.",
+        quadrant: "not-important-not-urgent",
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: "mix-7",
+        title: "Update Social Media",
+        description: "Post team updates on company social media channels.",
+        quadrant: "not-important-not-urgent",
+        createdAt: new Date().toISOString(),
+      },
+    ],
+  },
+  {
+    id: "done",
+    icon: <CheckCircle2 className="w-6 h-6 text-green-500" />,
+    title: "Done",
+    description: "Completed tasks",
+    tasks: [],
+  },
+];
+const emptyQuadrants: QuadrantType[] = [
   {
     id: "important-urgent",
     icon: <AlertCircle className="w-6 h-6 text-primary" />,
@@ -93,8 +200,27 @@ export default function Home() {
 
   const handleClearAll = () => {
     localStorage.removeItem("eisenhowerTasks");
-    setQuadrants(initialQuadrants);
+    setQuadrants(emptyQuadrants);
   };
+
+  // Inside your Home component, add these before the return statement
+const mouseSensor = useSensor(MouseSensor, {
+  // Lower activation distance makes it more responsive
+  activationConstraint: {
+    distance: 10,
+  },
+});
+
+const touchSensor = useSensor(TouchSensor, {
+  // Increase delay to prevent scroll conflicts
+  activationConstraint: {
+    delay: 250,
+    tolerance: 5,
+  },
+});
+
+const sensors = useSensors(mouseSensor, touchSensor);
+
 
   useEffect(() => {
     const savedTasks = localStorage.getItem("eisenhowerTasks");
@@ -221,8 +347,8 @@ export default function Home() {
     }));
 
     //look for empty tasks
-    if (taskData.length === 0) {
-      alert("Please add some tasks to categorize with AI");
+    if (taskData.length < 2) {
+      toast.error("It seems you have no or not enough tasks to categorize.");
       return;
     }
 
@@ -324,38 +450,42 @@ export default function Home() {
 
   return (
     <>
-      <div className="min-h-screen  p-4 sm:p-8">
+      <div className="min-h-screen bg-primary/10 p-4 sm:p-8">
         <div className="max-w-7xl mx-auto container">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-8">
             <div className="flex items-center gap-4 py-2">
               <div className="relative">
-              <Image
-                src="/logo.svg"
-                alt="Eisenflow"
-                width={56}
-                height={56}
-                className="object-contain drop-shadow-md"
-                priority
-              />
+                <Image
+                  src="/logo.svg"
+                  alt="Eisenflow"
+                  width={56}
+                  height={56}
+                  className="object-contain drop-shadow-md"
+                  priority
+                />
               </div>
               <div className="flex flex-col">
-              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-                Eisenflow
-              </h1>
+                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                  Eisenflow
+                </h1>
                 <p className="text-sm text-muted-foreground font-medium">
-                Prioritize tasks efficiently with the Eisenhower Matrix
+                  Prioritize tasks efficiently with the Eisenhower Matrix
                 </p>
               </div>
             </div>
-            
 
             <div className="flex w-full sm:w-auto gap-2">
               <Button
                 onClick={handleAISort}
+                disabled={loading}
                 className="flex-1 sm:flex-initial items-center"
               >
-                <Wand2 className="h-4 w-4" />
-                Ask AI
+                {loading ? (
+                  <div className="w-4 h-4 border-2 border-current border-t-transparent animate-spin rounded-full " />
+                ) : (
+                  <Wand2 className="h-4 w-4" />
+                )}
+                {loading ? "Thinking..." : "Ask AI"}
               </Button>
               <Button
                 onClick={exportAsPdf}
@@ -385,6 +515,7 @@ export default function Home() {
             ) : (
               <>
                 <DndContext
+                sensors={sensors}
                   collisionDetection={closestCenter}
                   onDragStart={handleDragStart}
                   onDragEnd={handleDragEnd}
@@ -412,7 +543,12 @@ export default function Home() {
                     />
                   </div>
 
-                  <DragOverlay>
+                  <DragOverlay
+                    dropAnimation={{
+                      duration: 250,
+                      easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
+                    }}
+                  >
                     {activeTask ? (
                       <div className="w-full max-w-[calc(100vw-2rem)] sm:max-w-md">
                         <Card className="bg-white dark:bg-gray-800 shadow-2xl">
