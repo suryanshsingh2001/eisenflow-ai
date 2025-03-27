@@ -214,7 +214,7 @@ export default function ParetoPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
+              {/* <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} />
@@ -225,7 +225,7 @@ export default function ParetoPage() {
                     fill={(entry) => entry.isPareto ? "hsl(var(--chart-1))" : "hsl(var(--chart-2))"}
                   />
                 </BarChart>
-              </ResponsiveContainer>
+              </ResponsiveContainer> */}
             </CardContent>
           </Card>
 
