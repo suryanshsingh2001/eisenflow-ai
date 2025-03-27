@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import generatePDF from "react-to-pdf";
 import axios from "axios";
 import {
   DndContext,
@@ -26,12 +27,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Task, Quadrant as QuadrantType } from "@/lib/types";
-import { categorizeTasks } from "@/lib/ai";
 import {
   AlertCircle,
   CalendarRange,
   Check,
   CheckCircle2,
+  Download,
   Trash2,
   Users2,
   Wand2,
@@ -87,6 +88,8 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [reasonings, setReasonings] = useState([]);
 
+  const targetRef = useRef(null);
+
   const handleClearAll = () => {
     localStorage.removeItem("eisenhowerTasks");
     setQuadrants(initialQuadrants);
@@ -123,24 +126,24 @@ export default function Home() {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveTask(null);
-  
+
     if (!over) return;
-  
+
     const activeQuadrant = quadrants.find((q) =>
       q.tasks.some((t) => t.id === active.id)
     );
-  
+
     if (!activeQuadrant) return;
-  
+
     const activeTask = activeQuadrant.tasks.find((t) => t.id === active.id);
     if (!activeTask) return;
-  
+
     // First check if the over.id matches any quadrant ID directly
-    const targetQuadrant = quadrants.find(q => q.id === over.id);
-    const overQuadrantId = targetQuadrant 
-      ? over.id 
-      : quadrants.find(q => q.tasks.some(t => t.id === over.id))?.id;
-  
+    const targetQuadrant = quadrants.find((q) => q.id === over.id);
+    const overQuadrantId = targetQuadrant
+      ? over.id
+      : quadrants.find((q) => q.tasks.some((t) => t.id === over.id))?.id;
+
     if (!overQuadrantId) return;
 
     // Only proceed if we're actually moving to a different quadrant
@@ -225,7 +228,9 @@ export default function Home() {
     try {
       //use api
       setLoading(true);
-      const response = await axios.post("/api/ai", { tasks: taskData });
+      const response = await axios.post("/api/ai/eisenhower", {
+        tasks: taskData,
+      });
 
       const { results } = response.data;
       if (!results) {
@@ -245,7 +250,7 @@ export default function Home() {
 
       const updatedQuadrants = quadrants.map((q) => ({
         ...q,
-        tasks: [],
+        tasks: [] as Task[],
       }));
 
       allTasks.forEach((task, index) => {
@@ -302,31 +307,59 @@ export default function Home() {
     saveTasks(updatedQuadrants as QuadrantType[]);
   };
 
+  const exportAsPdf = async () => {
+    const pdfFile = await generatePDF(targetRef, {
+      filename: "eisenhower_matrix.pdf",
+    });
+
+    //download the pdf
+    const blob = pdfFile.output("blob");
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "eisenhower_matrix.pdf";
+  };
+
   return (
     <>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-8">
+        <div className="max-w-7xl mx-auto container">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
               Eisenhower Matrix
             </h2>
-            <div className="flex gap-2">
-              <Button onClick={handleAISort} className="flex items-center">
-                <Wand2 className="h-4 w-4 " />
-                Ask AI
+            <div className="flex w-full sm:w-auto gap-2">
+              <Button
+              onClick={handleAISort}
+              className="flex-1 sm:flex-initial items-center"
+              >
+              <Wand2 className="h-4 w-4 mr-2" />
+              Ask AI
               </Button>
               <Button
-                onClick={handleClearAll}
-                variant="outline"
-                className="flex items-center"
+              onClick={exportAsPdf}
+              variant="outline"
+              className="flex-1 sm:flex-initial items-center"
               >
-                <Trash2 className="h-4 w-4 2" />
-                Clear All
+              <Download className="h-4 w-4 mr-2" />
+              Export
+              </Button>
+              <Button
+              onClick={handleClearAll}
+              variant="outline"
+              className="flex-1 sm:flex-initial items-center"
+              >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Clear All
               </Button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div
+            className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6"
+            ref={targetRef}
+          >
             {loading ? (
               <QuadrantGridSkeleton />
             ) : (
@@ -348,7 +381,7 @@ export default function Home() {
                     />
                   ))}
 
-                  <div className="col-span-2 mx-auto w-full max-w-2xl">
+                  <div className="col-span-1 lg:col-span-2 mx-auto w-full max-w-2xl">
                     <Quadrant
                       icon={quadrants[4].icon}
                       quadrant={quadrants[4]}
@@ -361,14 +394,14 @@ export default function Home() {
 
                   <DragOverlay>
                     {activeTask ? (
-                      <div className="w-full max-w-md">
+                      <div className="w-full max-w-[calc(100vw-2rem)] sm:max-w-md">
                         <Card className="bg-white dark:bg-gray-800 shadow-2xl">
-                          <CardHeader className="p-4">
-                            <CardTitle className="text-lg font-semibold">
+                          <CardHeader className="p-3 sm:p-4">
+                            <CardTitle className="text-base sm:text-lg font-semibold">
                               {activeTask.title}
                             </CardTitle>
                           </CardHeader>
-                          <CardContent className="p-4 pt-0">
+                          <CardContent className="p-3 sm:p-4 pt-0">
                             <CardDescription>
                               {activeTask.description}
                             </CardDescription>
@@ -383,7 +416,7 @@ export default function Home() {
           </div>
 
           <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-            <DialogContent>
+            <DialogContent className="sm:max-w-[425px] max-w-[calc(100vw-2rem)]">
               <DialogHeader>
                 <DialogTitle>Edit Task</DialogTitle>
               </DialogHeader>

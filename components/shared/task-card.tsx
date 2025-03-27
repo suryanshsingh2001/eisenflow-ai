@@ -15,6 +15,13 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
 import { AnimatedContainer } from "./animated-container";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MoreVertical } from "lucide-react";
 
 interface TaskCardProps {
   task: Task;
@@ -71,54 +78,47 @@ export function TaskCard({
         <Card
           ref={setNodeRef}
           style={style}
-          className={`  ${isDragging ? "shadow-2xl scale-105" : ""}`}
+          className={`${isDragging ? "shadow-2xl scale-105" : ""}`}
           {...attributes}
           {...listeners}
         >
-          <CardHeader>
-            <CardTitle className="text-md font-semibold">
-              {task.title}
-            </CardTitle>
-            <CardDescription className="text-sm">
-              {task.description}
-            </CardDescription>
-          </CardHeader>
-
-          <CardContent
-            className="justify-end invisible group-hover:visible"
-            onMouseEnter={() => setIsDisabled(true)}
-            onMouseLeave={() => setIsDisabled(false)}
-          >
-            <div className="flex gap-4">
-              {task.quadrant !== "done" && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onComplete(task.id)}
-                  className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  <Check className="h-4 w-4" />
-                </Button>
-              )}
-
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleEdit}
-                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleDelete}
-                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-md font-semibold">
+                {task.title}
+              </CardTitle>
+              <CardDescription className="text-sm">
+                {task.description}
+              </CardDescription>
             </div>
-          </CardContent>
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                asChild
+            
+              >
+                <Button 
+                variant="ghost" size="icon">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {task.quadrant !== "done" && (
+                  <DropdownMenuItem onClick={() => onComplete(task.id)}>
+                    <Check className="h-4 w-4 mr-2" />
+                    Complete
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem onClick={handleEdit}>
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleDelete}>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </CardHeader>
         </Card>
       </AnimatedContainer>
     )

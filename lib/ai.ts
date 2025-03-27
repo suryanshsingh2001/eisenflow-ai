@@ -1,3 +1,4 @@
+import { ParetoTask } from "@/app/pareto/page";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? "");
@@ -11,9 +12,9 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 export async function categorizeTasks(
   tasks: { title: string; description: string }[]
 ): Promise<{ quadrant: string; reasoning: string }[]> {
-  const sanitizedTasks = tasks.map(task => ({
-    title: String(task.title).replace(/[^\w\s-]/g, ''),
-    description: String(task.description).replace(/[^\w\s-]/g, '')
+  const sanitizedTasks = tasks.map((task) => ({
+    title: String(task.title).replace(/[^\w\s-]/g, ""),
+    description: String(task.description).replace(/[^\w\s-]/g, ""),
   }));
 
   const prompt = `You are an advanced AI task categorizer specializing in the Eisenhower Matrix.
@@ -47,4 +48,43 @@ Respond only with valid JSON matching the specified format.`;
       reasoning: "AI categorization failed, defaulting to Important & Urgent",
     }));
   }
+}
+
+export async function paretoAnalysis(tasks: ParetoTask[]) {
+  const prompt = `
+  Analyze these tasks and provide:
+  1. Suggested impact score (1-100)
+  2. Suggested effort score (1-100)
+  3. Brief optimization recommendation
+  
+  Consider:
+  - Business value and ROI
+  - Resource requirements
+  - Time constraints
+  - Dependencies
+  - Potential risks
+  
+  Tasks: ${JSON.stringify(tasks, null, 2)}
+  
+  Respond in this JSON format:
+  {
+    "analysis": [
+      {
+        "title": "task title",
+        "suggestedImpact": number,
+        "suggestedEffort": number,
+        "recommendation": "brief optimization advice"
+      }
+    ]
+  }
+`;
+
+  const result = await model.generateContent(prompt);
+  const response = result.response;
+  const text = response
+    .text()
+    .replace(/```json\n|\n```/g, "")
+    .trim();
+
+  return JSON.parse(text);
 }
