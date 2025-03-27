@@ -78,7 +78,7 @@ export function TaskCard({
         <Card
           ref={setNodeRef}
           style={style}
-          className={`${isDragging ? "shadow-2xl scale-105" : ""}`}
+          className={`${isDragging ? "shadow-2xl scale-105" : ""} draggable`}
           {...attributes}
           {...listeners}
         >

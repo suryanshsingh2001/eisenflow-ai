@@ -204,12 +204,14 @@ export default function Home() {
   };
 
   // Inside your Home component, add these before the return statement
-const mouseSensor = useSensor(MouseSensor, {
-  // Lower activation distance makes it more responsive
-  activationConstraint: {
-    distance: 10,
-  },
-});
+  const mouseSensor = useSensor(MouseSensor, {
+    // Decrease activation distance to make it more responsive
+    activationConstraint: {
+      distance: 3, // Reduced from 10 to 3 pixels
+      delay: 0, // Add this to remove any delay
+      tolerance: 0, // Add this to remove tolerance
+    },
+  });
 
 const touchSensor = useSensor(TouchSensor, {
   // Increase delay to prevent scroll conflicts

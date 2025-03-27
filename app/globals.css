@@ -77,6 +77,14 @@ body {
   -webkit-user-select: none;
 }
 
+.draggable {
+  cursor: grab;
+  touch-action: none;
+}
+
+.draggable:active {
+  cursor: grabbing;
+}
 
 
 @layer base {
