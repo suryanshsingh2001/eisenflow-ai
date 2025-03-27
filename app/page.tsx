@@ -41,6 +41,7 @@ import { Quadrant } from "@/components/shared/quadrant";
 import { QuadrantGridSkeleton } from "@/components/shared/loader";
 import RecommendationDialog from "@/components/shared/recommendation-dialog";
 import { toast } from "sonner";
+import Image from "next/image";
 
 const initialQuadrants: QuadrantType[] = [
   {
@@ -323,35 +324,54 @@ export default function Home() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-8">
+      <div className="min-h-screen  p-4 sm:p-8">
         <div className="max-w-7xl mx-auto container">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
-              Eisenhower Matrix
-            </h2>
+            <div className="flex items-center gap-4 py-2">
+              <div className="relative">
+              <Image
+                src="/logo.svg"
+                alt="Eisenflow"
+                width={56}
+                height={56}
+                className="object-contain drop-shadow-md"
+                priority
+              />
+              </div>
+              <div className="flex flex-col">
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                Eisenflow
+              </h1>
+                <p className="text-sm text-muted-foreground font-medium">
+                Prioritize tasks efficiently with the Eisenhower Matrix
+                </p>
+              </div>
+            </div>
+            
+
             <div className="flex w-full sm:w-auto gap-2">
               <Button
-              onClick={handleAISort}
-              className="flex-1 sm:flex-initial items-center"
+                onClick={handleAISort}
+                className="flex-1 sm:flex-initial items-center"
               >
-              <Wand2 className="h-4 w-4 mr-2" />
-              Ask AI
+                <Wand2 className="h-4 w-4" />
+                Ask AI
               </Button>
               <Button
-              onClick={exportAsPdf}
-              variant="outline"
-              className="flex-1 sm:flex-initial items-center"
+                onClick={exportAsPdf}
+                variant="outline"
+                className="flex-1 sm:flex-initial items-center"
               >
-              <Download className="h-4 w-4 mr-2" />
-              Export
+                <Download className="h-4 w-4" />
+                Export
               </Button>
               <Button
-              onClick={handleClearAll}
-              variant="outline"
-              className="flex-1 sm:flex-initial items-center"
+                onClick={handleClearAll}
+                variant="destructive"
+                className="flex-1 sm:flex-initial items-center"
               >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Clear All
+                <Trash2 className="h-4 w-4" />
+                Clear All
               </Button>
             </div>
           </div>

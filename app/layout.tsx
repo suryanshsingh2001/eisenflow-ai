@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Lato } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { Header } from "@/components/shared/header";
 
 const lato = Lato({
   weight: "400",
@@ -24,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${lato.variable}  antialiased`}
+        className={`${lato.variable}  antialiased bg-background`}
       >
         <Toaster richColors position="top-center"/>
         {children}
