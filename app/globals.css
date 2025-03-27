@@ -67,7 +67,7 @@ body {
   }
 }
 /* Add these CSS rules */
-.touch-none {
+/* .touch-none {
   touch-action: none;
 }
 
@@ -84,7 +84,7 @@ body {
 
 .draggable:active {
   cursor: grabbing;
-}
+} */
 
 
 @layer base {
