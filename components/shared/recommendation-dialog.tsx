@@ -44,7 +44,7 @@ const RecommendationDialog = ({
             key={index}
             className="group flex items-start gap-4 rounded-lg border border-gray-100 bg-white p-4 shadow-sm transition-all hover:border-blue-100 hover:bg-blue-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-900 dark:hover:bg-gray-750"
           >
-            <div className="flex-shrink-0 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 p-2 text-white shadow-md">
+            <div className="flex-shrink-0 rounded-full bg-gradient-to-br from-primary to-primary/80 p-2 text-white shadow-md">
           <span className="flex h-5 w-5 items-center justify-center font-semibold">
             {index + 1}
           </span>
@@ -69,7 +69,7 @@ const RecommendationDialog = ({
       <DialogContent className="max-w-2xl">
       <DialogHeader>
         <DialogTitle className="flex items-center gap-2 text-xl font-semibold text-gray-800 dark:text-gray-100">
-        <Lightbulb className="h-5 w-5 text-blue-600" />
+        <Lightbulb className="h-5 w-5 text-primary" />
         Strategic Recommendations
         </DialogTitle>
         <DialogDescription>
@@ -83,8 +83,8 @@ const RecommendationDialog = ({
           key={index}
           className="group flex items-start gap-4 rounded-lg border border-gray-100 bg-white p-4 shadow-sm transition-all hover:border-blue-100 hover:bg-blue-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-900 dark:hover:bg-gray-750"
         >
-          <div className="flex-shrink-0 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 p-2 text-white shadow-md">
-          <span className="flex h-5 w-5 items-center justify-center font-semibold">
+            <div className="flex-shrink-0 rounded-full bg-gradient-to-br from-primary to-primary/80 p-2 text-white shadow-md">
+            <span className="flex h-5 w-5 items-center justify-center font-semibold">
             {index + 1}
           </span>
           </div>
