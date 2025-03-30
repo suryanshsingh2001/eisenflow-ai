@@ -92,30 +92,24 @@ export async function paretoAnalysis(tasks: ParetoTask[]) {
 
 export async function frogAnalysis(tasks: FrogTask[]) {
   try {
-    const prompt = `
-      Analyze these tasks and provide:
-      1. Suggested order of completion
-      2. Brief strategy for each task
-      
-      Consider:
-      - Task complexity and difficulty
-      - Dependencies between tasks
-      - Best practices for task management
-      - Energy levels required
-      
-      Tasks: ${JSON.stringify(tasks, null, 2)}
-      
-      Respond in this JSON format:
-      {
-        "analysis": [
-          {
-            "title": "task title",
-            "strategy": "brief strategy advice",
-            "priority": "explanation of why this order"
-          }
-        ]
-      }
-    `;
+    const sanitizedTasks = tasks.map(task => ({
+      title: String(task.title).replace(/[^\w\s-]/g, ""),
+      description: String(task.description).replace(/[^\w\s-]/g, "")
+    }));
+
+    const prompt = `You are a task prioritization assistant.
+  Your only role is to analyze and prioritize tasks using the "Eat That Frog" methodology.
+
+  Required Output Format:
+  Return a JSON array of sorted tasks based on priorityScore, where each task has:
+  - "title": string (must match input)
+  - "priorityScore": number (1-5 only)
+  - "reasoning": string (max 100 characters)
+
+  Input Tasks:
+  ${JSON.stringify(sanitizedTasks, null, 2)}
+
+  Respond only with valid JSON matching the specified format, sorted by priorityScore descending.`;
 
     const result = await model.generateContent(prompt);
     const response = result.response;
@@ -124,6 +118,8 @@ export async function frogAnalysis(tasks: FrogTask[]) {
       .replace(/```json\n|\n```/g, "")
       .trim();
 
+
+      console.error("Response text:", text);
     return JSON.parse(text);
   } catch (error) {
     console.error("Error analyzing tasks:", error);

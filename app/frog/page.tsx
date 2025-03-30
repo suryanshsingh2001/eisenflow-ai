@@ -8,9 +8,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
   Frown as Frog,
@@ -28,21 +26,23 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AddTaskDialog } from "@/components/shared/frog/AddFrogTaskDialog";
+import { EditTaskDialog } from "@/components/shared/frog/EditFrogTaskDialog";
 
 export interface FrogTask {
   id: string;
   title: string;
   description: string;
-  difficulty: number;
+  priorityScore: number;
   completed: boolean;
   completedAt?: string;
-  strategy?: string;
+  reasoning?: string;
 }
 
 interface AIAnalysis {
   title: string;
-  strategy: string;
-  priority: string;
+  reasoning: string;
+  priorityScore: string;
 }
 
 export default function EatTheFrogPage() {
@@ -58,7 +58,7 @@ export default function EatTheFrogPage() {
     id: "",
     title: "",
     description: "",
-    difficulty: 1,
+    priorityScore: 1,
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -82,7 +82,7 @@ export default function EatTheFrogPage() {
                 ...task,
                 title: taskForm.title,
                 description: taskForm.description,
-                difficulty: taskForm.difficulty,
+                priorityScore: taskForm.priorityScore,
               }
             : task
         )
@@ -92,13 +92,13 @@ export default function EatTheFrogPage() {
         id: crypto.randomUUID(),
         title: taskForm.title,
         description: taskForm.description,
-        difficulty: taskForm.difficulty,
+        priorityScore: taskForm.priorityScore,
         completed: false,
       };
       setTasks([...tasks, task]);
     }
 
-    setTaskForm({ id: "", title: "", description: "", difficulty: 1 });
+    setTaskForm({ id: "", title: "", description: "", priorityScore: 1 });
     setIsEditing(false);
     setShowTaskDialog(false);
   };
@@ -108,7 +108,7 @@ export default function EatTheFrogPage() {
       id: task.id,
       title: task.title,
       description: task.description,
-      difficulty: task.difficulty,
+      priorityScore: task.priorityScore,
     });
     setIsEditing(true);
     setShowTaskDialog(true);
@@ -131,8 +131,8 @@ export default function EatTheFrogPage() {
   const getTopFrogs = () => {
     return tasks
       .filter((task) => !task.completed)
-      .sort((a, b) => b.difficulty - a.difficulty)
-      .slice(0, 3);
+      .sort((a, b) => b.priorityScore - a.priorityScore)
+      .slice(0, 1);
   };
 
   const analyzeWithAI = async () => {
@@ -146,10 +146,10 @@ export default function EatTheFrogPage() {
         body: JSON.stringify({
           tasks: tasks
             .filter((task) => !task.completed)
-            .map(({ title, description, difficulty }) => ({
+            .map(({ title, description, priorityScore }) => ({
               title,
               description,
-              difficulty,
+              priorityScore,
             })),
         }),
       });
@@ -157,6 +157,7 @@ export default function EatTheFrogPage() {
       if (!response.ok) throw new Error("Analysis failed");
 
       const data = await response.json();
+      console.log("AI Analysis Results:", data);
       setAnalysisResults(data.results);
       setShowAnalysisDialog(true);
     } catch (error) {
@@ -172,7 +173,8 @@ export default function EatTheFrogPage() {
       if (analysis) {
         return {
           ...task,
-          strategy: analysis.strategy,
+          priorityScore: Number(analysis.priorityScore),
+          reasoning: analysis.reasoning,
         };
       }
       return task;
@@ -197,7 +199,8 @@ export default function EatTheFrogPage() {
   const topFrogs = getTopFrogs();
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
+    <>
+    <div className="max-w-7xl mx-auto space-y-8 min-h-screen">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
@@ -238,16 +241,16 @@ export default function EatTheFrogPage() {
                   {task.title}
                 </CardTitle>
                 <div className="flex gap-1 mt-2">
-                  {renderFrogIcons(task.difficulty)}
+                  {renderFrogIcons(task.priorityScore)}
                 </div>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                   {task.description}
                 </p>
-                {task.strategy && (
+                {task.reasoning && (
                   <Alert className="mb-4">
-                    <AlertDescription>{task.strategy}</AlertDescription>
+                    <AlertDescription>{task.reasoning}</AlertDescription>
                   </Alert>
                 )}
                 <div className="flex gap-2">
@@ -263,72 +266,15 @@ export default function EatTheFrogPage() {
           ))}
         </div>
       )}
+      <Button
+        variant="outline"
+        className="w-full mt-4 md:mt-0"
+        onClick={() => setShowTaskDialog(true)}
+      >
+        Add Task
+      </Button>
 
-      <Dialog open={showTaskDialog} onOpenChange={setShowTaskDialog}>
-        <DialogTrigger asChild>
-          <Button className="w-full">Add New Task</Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {isEditing ? "Edit Task" : "Add a New Task"}
-            </DialogTitle>
-            <DialogDescription>
-              {isEditing
-                ? "Update your task details"
-                : "What's your next big challenge?"}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium">Task Title</label>
-              <Input
-                value={taskForm.title}
-                onChange={(e) =>
-                  setTaskForm({ ...taskForm, title: e.target.value })
-                }
-                placeholder="Enter task title"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium">Description</label>
-              <Textarea
-                value={taskForm.description}
-                onChange={(e) =>
-                  setTaskForm({ ...taskForm, description: e.target.value })
-                }
-                placeholder="Describe your task"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium mb-2 block">
-                Difficulty Level
-              </label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="range"
-                  min="1"
-                  max="5"
-                  value={taskForm.difficulty}
-                  onChange={(e) =>
-                    setTaskForm({
-                      ...taskForm,
-                      difficulty: Number(e.target.value),
-                    })
-                  }
-                  className="w-full"
-                />
-                <div className="flex gap-1 min-w-[100px]">
-                  {renderFrogIcons(taskForm.difficulty)}
-                </div>
-              </div>
-            </div>
-            <Button onClick={handleTaskSubmit} className="w-full">
-              {isEditing ? "Update Task" : "Add Task"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+     
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <Card>
@@ -353,12 +299,14 @@ export default function EatTheFrogPage() {
                         </p>
                         <div className="mt-2 flex gap-2">
                           <div className="flex gap-1">
-                            {renderFrogIcons(task.difficulty)}
+                            {renderFrogIcons(task.priorityScore)}
                           </div>
                         </div>
-                        {task.strategy && (
+                        {task.reasoning && (
                           <Alert className="mt-2">
-                            <AlertDescription>{task.strategy}</AlertDescription>
+                            <AlertDescription>
+                              {task.reasoning}
+                            </AlertDescription>
                           </Alert>
                         )}
                       </div>
@@ -416,7 +364,7 @@ export default function EatTheFrogPage() {
                         </p>
                         <div className="mt-2 flex gap-2">
                           <div className="flex gap-1">
-                            {renderFrogIcons(task.difficulty)}
+                            {renderFrogIcons(task.priorityScore)}
                           </div>
                           <Badge variant="outline">
                             Completed:{" "}
@@ -440,48 +388,84 @@ export default function EatTheFrogPage() {
         </Card>
       </div>
 
-    <Dialog open={showAnalysisDialog} onOpenChange={setShowAnalysisDialog}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
-        <DialogHeader>
-        <DialogTitle>AI Task Analysis</DialogTitle>
-        <DialogDescription>
-          Review the AI suggestions for your tasks
-        </DialogDescription>
-        </DialogHeader>
-        <div className="flex-1 overflow-y-auto pr-6 -mr-6">
-        <div className="space-y-4">
-          {analysisResults.map((analysis, index) => (
-            <Card key={index}>
-            <CardHeader>
-              <CardTitle className="text-lg">{analysis.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <p>
-                <span className="font-medium">Strategy:</span>{" "}
-                {analysis.strategy}
-                </p>
-                <p>
-                <span className="font-medium">Priority:</span>{" "}
-                {analysis.priority}
-                </p>
-              </div>
-            </CardContent>
-            </Card>
-          ))}
-        </div>
-        </div>
-        <div className="flex justify-end space-x-2 pt-4 mt-4 border-t">
-        <Button
-          variant="outline"
-          onClick={() => setShowAnalysisDialog(false)}
-        >
-          Cancel
-        </Button>
-        <Button onClick={applyAISuggestions}>Apply Suggestions</Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+      <Dialog open={showAnalysisDialog} onOpenChange={setShowAnalysisDialog}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle>AI Task Analysis</DialogTitle>
+            <DialogDescription>
+              Review the AI suggestions for your tasks
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto pr-6 -mr-6">
+            <div className="space-y-4">
+              {analysisResults.map((analysis, index) => (
+                <Card key={index}>
+                  <CardHeader>
+                    <CardTitle className="text-lg">{analysis.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <p>
+                        <span className="font-medium">Strategy:</span>{" "}
+                        {analysis.reasoning}
+                      </p>
+                      <p>
+                        <span className="font-medium">Priority:</span>{" "}
+                        {analysis.priorityScore}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+          <div className="flex justify-end space-x-2 pt-4 mt-4 border-t">
+            <Button
+              variant="outline"
+              onClick={() => setShowAnalysisDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button onClick={applyAISuggestions}>Apply Suggestions</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
+
+    {isEditing ? (
+        <EditTaskDialog
+          open={showTaskDialog}
+          onOpenChange={setShowTaskDialog}
+          task={taskForm}
+          onSubmit={(data) => {
+            setTasks(tasks.map((task) =>
+              task.id === taskForm.id
+                ? {
+                    ...task,
+                    ...data,
+                  }
+                : task
+            ));
+            setShowTaskDialog(false);
+            setIsEditing(false);
+          }}
+        />
+      ) : (
+        <AddTaskDialog
+          open={showTaskDialog}
+          onOpenChange={setShowTaskDialog}
+          onSubmit={(data) => {
+            const newTask = {
+              id: crypto.randomUUID(),
+              ...data,
+              completed: false,
+            };
+            setTasks([...tasks, newTask]);
+            setShowTaskDialog(false);
+          }}
+        />
+      )}
+
+    </>
   );
 }

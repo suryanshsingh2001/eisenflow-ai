@@ -29,9 +29,8 @@ export async function POST(request: NextRequest) {
     }
 
     const frogTasks = await frogAnalysis(body.tasks);
-    console.log("Frog Tasks:", frogTasks.analysis);
 
-    return NextResponse.json({ success: true, results: frogTasks.analysis });
+    return NextResponse.json({ success: true, results: frogTasks });
   } catch (error) {
     console.error("API Error:", error);
     return NextResponse.json(
