@@ -3,7 +3,8 @@ import { Lato } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Header } from "@/components/shared/header";
-import { Banner } from "@/components/shared/banner";
+import Footer from "@/components/shared/footer";
+import Banner from "@/components/shared/banner";
 
 const lato = Lato({
   weight: "400",
@@ -61,13 +62,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${lato.variable}  antialiased bg-background`}>
         <Toaster richColors position="top-center" />
-        {/* <Banner
-          title="We are live on Peerlist"
-          message="Make sure to upvote us on Peerlist"
-          variant="default"
-        /> */}
+        <Banner
+          
+        />
         {children}
       </body>
+     
     </html>
   );
 }

@@ -1,71 +1,77 @@
 "use client";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { X } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { Button } from "../ui/button";
+import { RocketIcon, XIcon } from "lucide-react";
 
-interface BannerProps {
-  title?: string;
-  message: string;
-  variant?: "default" | "success" | "error" | "warning";
-  onClose?: () => void;
-  actionLabel?: string;
-  onAction?: () => void;
-}
+import { Button } from "@/components/ui/button";
+import { AnimatedContainer } from "./animated-container";
+import Image from "next/image";
 
-export function Banner({
-  title,
-  message,
-  variant = "default",
-  onClose,
-  actionLabel,
-  onAction,
-}: BannerProps) {
+export default function Component() {
   const [isVisible, setIsVisible] = useState(true);
 
   if (!isVisible) return null;
 
-  const handleClose = () => {
-    setIsVisible(false);
-    onClose?.();
-  };
-  const onActionClick = () => {
-    window.open("https://peerlist.com", "_blank");
-  };
-
   return (
-    <Alert
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 shadow-sm bg-card"
-      )}
+    <AnimatedContainer
+      animation="fade"
+      duration={0.5}
+      className="dark bg-muted text-foreground px-4 py-3"
     >
-      <div className="flex flex-col gap-1">
-        {title && (
-          <AlertTitle className="text-base font-semibold tracking-tight leading-6">
-            {title}
-          </AlertTitle>
-        )}
-        <AlertDescription className="text-sm font-normal leading-5 tracking-wide opacity-90">
-          {message}
-        </AlertDescription>
-      </div>
-      <div className="flex items-center gap-2">
-        <Button onClick={onAction} variant="default"   size="lg" className="h-8">
-          Upvote
-        </Button>
-
+      <div className="flex gap-2 md:items-center">
+        <div className="flex grow gap-3 md:items-center">
+          <div
+            className="bg-primary/15 flex size-9 shrink-0 items-center justify-center rounded-full max-md:mt-0.5"
+            aria-hidden="true"
+          >
+            <RocketIcon className="opacity-80" size={16} />
+          </div>
+          <div className="flex grow flex-col justify-between gap-3 md:flex-row md:items-center">
+            <div className="space-y-0.5">
+              <p className="text-sm font-medium">
+                We're live on Peerlist LaunchPad! 🎉
+              </p>
+              <p className="text-muted-foreground text-sm">
+                Give us a vote and help us reach more people!
+              </p>
+            </div>
+            <div className="flex gap-2 max-md:flex-wrap">
+              <Button
+                variant={"outline"}
+                size="sm"
+                className=" text-sm flex items-center gap-2"
+                onClick={() =>
+                  window.open(
+                    "https://peerlist.io/surydev/project/eisenflow",
+                    "_blank"
+                  )
+                }
+              >
+                <Image
+                  src="/peerlist.svg"
+                  alt="Peerlist"
+                  width={16}
+                  height={16}
+                  className="w-4 h-4"
+                />
+                Upvote on Peerlist
+              </Button>
+            </div>
+          </div>
+        </div>
         <Button
-          onClick={handleClose}
-          variant="outline"
-          size="sm"
-          className="h-6 w-6 p-0 hover:bg-transparent"
+          variant="ghost"
+          className="group -my-1.5 -me-2 size-8 shrink-0 p-0 hover:bg-transparent"
+          onClick={() => setIsVisible(false)}
           aria-label="Close banner"
         >
-          <X className="h-4 w-4" />
+          <XIcon
+            size={16}
+            className="opacity-60 transition-opacity group-hover:opacity-100"
+            aria-hidden="true"
+          />
         </Button>
       </div>
-    </Alert>
+    </AnimatedContainer>
   );
 }

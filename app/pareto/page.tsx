@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
+import { redirect } from "next/navigation";
 
 export interface ParetoTask {
   id: string;
@@ -53,6 +54,8 @@ export default function ParetoPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResults, setAnalysisResults] = useState<AIAnalysis[]>([]);
   const [showAnalysisDialog, setShowAnalysisDialog] = useState(false);
+
+  return redirect("/");
 
   useEffect(() => {
     localStorage.setItem("paretoTasks", JSON.stringify(tasks));
