@@ -14,7 +14,7 @@ const lato = Lato({
 export const metadata: Metadata = {
   title: "Eisenflow",
 
-  description: "Eisenflow is a project management tool for developers",
+  description: "AI-powered task categorization based on the Eisenhower Matrix. Prioritize tasks efficiently and focus on what truly matters.",
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Eisenflow",
-    description: "Eisenflow is a project management tool for developers",
+    description: "AI-powered task categorization based on the Eisenhower Matrix. Prioritize tasks efficiently and focus on what truly matters.",
     images: [
       {
         url: "/og.png",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Eisenflow",
-    description: "Eisenflow is a project management tool for developers",
+    description: "AI-powered task categorization based on the Eisenhower Matrix. Prioritize tasks efficiently and focus on what truly matters.",
     url: "https://eisenflow.surydev.site/",
     siteName: "Eisenflow",
     images: [
