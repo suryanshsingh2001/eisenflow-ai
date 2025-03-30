@@ -468,6 +468,11 @@ export default function Home() {
 
   const moveToEatTheFrog = async () => {
     //get the task with the most urgent deadline
+    toast.info("This feature is coming soon!", {
+      description: "Stay tuned for updates!",
+      duration: 3000,
+    });
+    return;
 
     try {
       // Get tasks from important-urgent quadrant
@@ -565,14 +570,14 @@ export default function Home() {
                   </AlertDescription>
                 </div>
               </div>
-              <Button
-                variant="outline"
-                className="mt-3 sm:mt-0 font-medium"
+                <Button
+                variant="default"
+                className="mt-3 sm:mt-0 font-medium "
                 onClick={moveToEatTheFrog}
-              >
-                <ExternalLink className="h-4 w-4" />
-                Try Eat the Frog
-              </Button>
+                >
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Eat the Frog (Coming Soon)
+                </Button>
             </Alert>
           )}
 
