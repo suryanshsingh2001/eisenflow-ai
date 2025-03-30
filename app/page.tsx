@@ -49,6 +49,7 @@ import RecommendationDialog from "@/components/shared/recommendation-dialog";
 import { toast } from "sonner";
 import Image from "next/image";
 import { EditTaskDialog } from "@/components/shared/edit-task-form";
+import InfoDialog from "@/components/shared/info-dialog";
 
 const initialQuadrants: QuadrantType[] = [
   {
@@ -483,9 +484,13 @@ export default function Home() {
                 />
               </div>
               <div className="flex flex-col">
-                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-                  Eisenflow
-                </h1>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                    Eisenflow
+                  </h1>
+                  <InfoDialog />
+                </div>
+
                 <p className="text-sm text-muted-foreground font-medium">
                   Prioritize tasks efficiently with the Eisenhower Matrix
                 </p>
