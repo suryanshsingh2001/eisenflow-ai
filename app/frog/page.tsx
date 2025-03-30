@@ -16,6 +16,8 @@ import {
   CheckCircle2,
   AlertTriangle,
   Wand2,
+  Info,
+  Plus,
 } from "lucide-react";
 import {
   Dialog,
@@ -25,10 +27,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AddTaskDialog } from "@/components/shared/frog/AddFrogTaskDialog";
 import { EditTaskDialog } from "@/components/shared/frog/EditFrogTaskDialog";
 import Image from "next/image";
+import { AnimatedContainer } from "@/components/shared/animated-container";
 
 export interface FrogTask {
   id: string;
@@ -69,40 +72,38 @@ export default function EatTheFrogPage() {
   const [analysisResults, setAnalysisResults] = useState<AIAnalysis[]>([]);
 
   useEffect(() => {
-    localStorage.setItem("frogTasks", JSON.stringify(tasks));
+    //from eisentower tasks get the urgent and important tasks these are in local storage
+    //i want the urgent tasks from location state to be displayed here if they exist
+
+    const urgentTasks = localStorage.getItem("urgentTasks");
+    if (!urgentTasks) return;
+    if (urgentTasks) {
+      const parsedTasks = JSON.parse(urgentTasks);
+      const frogInitialTasks = parsedTasks.map((task: any) => {
+        return {
+          id: task.id,
+          title: task.title,
+          description: task.description || "",
+          priorityScore: 5,
+          completed: false,
+        };
+      });
+      console.log("Frog initial tasks:", frogInitialTasks);
+
+      setTasks((prevTasks) => {
+        const existingTaskIds = new Set(prevTasks.map((task) => task.id));
+        const newTasks = frogInitialTasks.filter(
+          (task: FrogTask) => !existingTaskIds.has(task.id)
+        );
+        return [...prevTasks, ...newTasks];
+      });
+      localStorage.removeItem("urgentTasks");
+    }
   }, [tasks]);
 
-  const handleTaskSubmit = () => {
-    if (!taskForm.title) return;
-
-    if (isEditing) {
-      setTasks(
-        tasks.map((task) =>
-          task.id === taskForm.id
-            ? {
-                ...task,
-                title: taskForm.title,
-                description: taskForm.description,
-                priorityScore: taskForm.priorityScore,
-              }
-            : task
-        )
-      );
-    } else {
-      const task: FrogTask = {
-        id: crypto.randomUUID(),
-        title: taskForm.title,
-        description: taskForm.description,
-        priorityScore: taskForm.priorityScore,
-        completed: false,
-      };
-      setTasks([...tasks, task]);
-    }
-
-    setTaskForm({ id: "", title: "", description: "", priorityScore: 1 });
-    setIsEditing(false);
-    setShowTaskDialog(false);
-  };
+  useEffect(() => {
+    localStorage.setItem("frogTasks", JSON.stringify(tasks));
+  }, [tasks]);
 
   const editTask = (task: FrogTask) => {
     setTaskForm({
@@ -192,11 +193,7 @@ export default function EatTheFrogPage() {
         alt="Frog icon"
         width={20}
         height={20}
-        className={`${
-          index < difficulty
-            ? "opacity-100"
-            : "opacity-30"
-        }`}
+        className={`${index < difficulty ? "opacity-100" : "opacity-30"}`}
       />
     ));
   };
@@ -205,32 +202,63 @@ export default function EatTheFrogPage() {
 
   return (
     <>
-      {" "}
       <div className="min-h-screen bg-primary/10 p-4 sm:p-8">
         <div className="max-w-7xl mx-auto container space-y-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                <Frog className="h-8 w-8" />
-                Eat That Frog
-              </h1>
-              <p className="text-gray-600 dark:text-gray-300">
-                Start your day by tackling your biggest, most challenging task
-                first.
-              </p>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-8">
+            <div className="flex items-center gap-4 py-2">
+              <div className="relative">
+                <Image
+                  src="/frog.png"
+                  alt="Eat That Frog"
+                  width={56}
+                  height={56}
+                  className="object-contain drop-shadow-md"
+                  priority
+                />
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-green-600 to-green-400 bg-clip-text text-transparent">
+                    Eat That Frog
+                  </h1>
+                </div>
+                <p className="text-sm text-muted-foreground font-medium">
+                  Start your day by tackling your biggest, most challenging task
+                  first
+                </p>
+              </div>
             </div>
-            <Button
-              onClick={analyzeWithAI}
-              disabled={isAnalyzing || tasks.length === 0}
-              className="flex items-center gap-2"
-            >
-              <Wand2 className="h-4 w-4" />
-              {isAnalyzing ? "Analyzing..." : "Analyze Tasks"}
-            </Button>
+
+            <div className="flex w-full sm:w-auto gap-2">
+              <Button
+                variant="outline"
+                className="w-1/2"
+                onClick={() => setShowTaskDialog(true)}
+              >
+                <Plus className="h-4 w-4" />
+                Add Task
+              </Button>
+              <Button
+                onClick={analyzeWithAI}
+                disabled={isAnalyzing || tasks.length === 0}
+                className="flex-1 sm:flex-initial items-center"
+              >
+                {isAnalyzing ? (
+                  <div className="w-4 h-4 border-2 border-current border-t-transparent animate-spin rounded-full" />
+                ) : (
+                  <Wand2 className="h-4 w-4" />
+                )}
+                {isAnalyzing ? "Analyzing..." : "Ask AI"}
+              </Button>
+            </div>
           </div>
 
-          {topFrogs.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {topFrogs!.length > 0 && (
+            <AnimatedContainer
+              animation="slide"
+              duration={0.4}
+              className="grid grid-cols-1 md:grid-cols-3 gap-4"
+            >
               {topFrogs.map((task, index) => (
                 <Card
                   key={task.id}
@@ -257,6 +285,7 @@ export default function EatTheFrogPage() {
                     </p>
                     {task.reasoning && (
                       <Alert className="mb-4">
+                        <Info className="h-4 w-4" />
                         <AlertDescription>{task.reasoning}</AlertDescription>
                       </Alert>
                     )}
@@ -271,17 +300,14 @@ export default function EatTheFrogPage() {
                   </CardContent>
                 </Card>
               ))}
-            </div>
+            </AnimatedContainer>
           )}
-          <Button
-            variant="outline"
-            className="w-full mt-4 md:mt-0"
-            onClick={() => setShowTaskDialog(true)}
-          >
-            Add Task
-          </Button>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <AnimatedContainer
+            animation="scale"
+            duration={0.4}
+            className="grid grid-cols-1 md:grid-cols-2 gap-8"
+          >
             <Card>
               <CardHeader>
                 <CardTitle>Active Tasks</CardTitle>
@@ -292,7 +318,9 @@ export default function EatTheFrogPage() {
                   {tasks
                     .filter((task) => !task.completed)
                     .map((task) => (
-                      <div
+                      <AnimatedContainer
+                        animation="scale"
+                        duration={0.4}
                         key={task.id}
                         className="p-4 rounded-lg border border-gray-200 dark:border-gray-700"
                       >
@@ -333,7 +361,7 @@ export default function EatTheFrogPage() {
                             </Button>
                           </div>
                         </div>
-                      </div>
+                      </AnimatedContainer>
                     ))}
                 </div>
               </CardContent>
@@ -395,7 +423,7 @@ export default function EatTheFrogPage() {
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </AnimatedContainer>
 
           <Dialog
             open={showAnalysisDialog}

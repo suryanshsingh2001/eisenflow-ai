@@ -1,6 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+
+// @ts-ignore */
+import { useToImage } from "@hcorta/react-to-image"; // Import the useToImage hook
+
 import generatePDF from "react-to-pdf";
 import axios from "axios";
 import {
@@ -39,10 +43,12 @@ import {
   Check,
   CheckCircle2,
   Download,
+  ExternalLink,
   Trash2,
   Users2,
   Wand2,
 } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Quadrant } from "@/components/shared/quadrant";
 import { QuadrantGridSkeleton } from "@/components/shared/loader";
 import RecommendationDialog from "@/components/shared/recommendation-dialog";
@@ -50,6 +56,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { EditTaskDialog } from "@/components/shared/edit-task-form";
 import InfoDialog from "@/components/shared/info-dialog";
+import { useRouter } from "next/navigation";
 
 const initialQuadrants: QuadrantType[] = [
   {
@@ -201,8 +208,9 @@ export default function Home() {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(false);
   const [reasonings, setReasonings] = useState([]);
+  const { ref, getPng } = useToImage();
 
-  const targetRef = useRef(null);
+  const router = useRouter();
 
   const handleClearAll = () => {
     localStorage.removeItem("eisenhowerTasks");
@@ -453,20 +461,34 @@ export default function Home() {
     saveTasks(updatedQuadrants as QuadrantType[]);
   };
 
-  const exportAsPdf = async () => {
-    const pdfFile = await generatePDF(targetRef, {
-      filename: "eisenhower_matrix.pdf",
-    });
-
-    //download the pdf
-    const blob = pdfFile.output("blob");
-    const url = window.URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "eisenhower_matrix.pdf";
+  const exportTasks = () => {
+    getPng();
+    toast.info("Generating image...");
   };
 
+  const moveToEatTheFrog = async () => {
+    //get the task with the most urgent deadline
+
+    try {
+      // Get tasks from important-urgent quadrant
+      const urgentQuadrant = quadrants.find((q) => q.id === "important-urgent");
+      const urgentTasks = urgentQuadrant?.tasks || [];
+
+      if (urgentTasks.length < 2) {
+        toast.error("No urgent tasks found to prioritize.");
+        return;
+      }
+
+      // Save urgent tasks to localStorage
+      localStorage.setItem("urgentTasks", JSON.stringify(urgentTasks));
+
+      // Navigate to frogs page
+      router.push("/frog");
+    } catch (error) {
+      console.error("Error moving to Eat the Frog:", error);
+      toast.error("Failed to move tasks. Please try again.");
+    }
+  };
   return (
     <>
       <div className="min-h-screen bg-primary/10 p-4 sm:p-8">
@@ -511,7 +533,7 @@ export default function Home() {
                 {loading ? "Thinking..." : "Ask AI"}
               </Button>
               <Button
-                onClick={exportAsPdf}
+                onClick={exportTasks}
                 variant="outline"
                 className="flex-1 sm:flex-initial items-center"
               >
@@ -529,9 +551,34 @@ export default function Home() {
             </div>
           </div>
 
+          {quadrants[0].tasks.length > 0 && (
+            <Alert className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between">
+              <div className="flex gap-2">
+                <AlertCircle className="h-5 w-5 mt-1 text-primary" />
+                <div>
+                  <AlertTitle className="text-lg font-semibold tracking-tight">
+                    Ready to prioritize your urgent tasks?
+                  </AlertTitle>
+                  <AlertDescription className="text-sm text-muted-foreground">
+                    Use the Eat the Frog method to tackle your important and
+                    urgent tasks effectively.
+                  </AlertDescription>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                className="mt-3 sm:mt-0 font-medium"
+                onClick={moveToEatTheFrog}
+              >
+                <ExternalLink className="h-4 w-4" />
+                Try Eat the Frog
+              </Button>
+            </Alert>
+          )}
+
           <div
             className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6"
-            ref={targetRef}
+            ref={ref}
           >
             {loading ? (
               <QuadrantGridSkeleton />
