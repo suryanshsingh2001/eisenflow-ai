@@ -13,7 +13,43 @@ const lato = Lato({
 
 export const metadata: Metadata = {
   title: "Eisenflow",
+
   description: "Eisenflow is a project management tool for developers",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Eisenflow",
+    description: "Eisenflow is a project management tool for developers",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Eisenflow",
+      },
+    ],
+    creator: "@surydev",
+  },
+  openGraph: {
+    title: "Eisenflow",
+    description: "Eisenflow is a project management tool for developers",
+    url: "https://eisenflow.surydev.site/",
+    siteName: "Eisenflow",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Eisenflow",
+      },
+    ],
+    locale: "en-US",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
