@@ -606,10 +606,10 @@ export default function Home() {
         <Button
           onClick={() => setIsRecommendationDialogOpen(true)}
           variant="default"
-          className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 shadow-lg z-30"
+          className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 shadow-lg z-30 bg-gradient-to-r from-primary to-purple-600 hover:opacity-90 transition-all duration-200 gap-2 font-medium"
         >
-          <BadgeInfo className="h-4 w-4 text-yellow-400" />
-          Recommendations
+          <BadgeInfo className="h-4 w-4 text-white" />
+          View Recommendations
         </Button>
       )}
 
