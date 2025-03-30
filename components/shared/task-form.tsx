@@ -21,55 +21,90 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "../ui/drawer";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+
 
 interface TaskFormProps {
   onSubmit: (task: Omit<Task, "id" | "createdAt">) => void;
   initialQuadrant?: Task["quadrant"];
 }
 
+import * as z from "zod"
+
+export const taskFormSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string(),
+  quadrant: z.enum(["important-urgent" , "important-not-urgent" , "not-important-urgent" , "not-important-not-urgent" , "done"])
+})
+
+export type TaskFormValues = z.infer<typeof taskFormSchema>
+
 export function TaskForm({ onSubmit, initialQuadrant }: TaskFormProps) {
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-
   const isMobile = useMediaQuery("(max-width: 640px)");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim()) return;
-
-    onSubmit({
-      title,
-      description,
+  const form = useForm<TaskFormValues>({
+    resolver: zodResolver(taskFormSchema),
+    defaultValues: {
+      title: "",
+      description: "",
       quadrant: initialQuadrant || "important-urgent",
-    });
+    },
+  });
 
-    setTitle("");
-    setDescription("");
+  const handleSubmit = (values: TaskFormValues) => {
+    onSubmit(values);
+    form.reset();
     setOpen(false);
   };
 
   const Content = () => {
     return (
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-4">
-          <Input
-            placeholder="Task title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="mb-2"
-          />
-          <Textarea
-            placeholder="Task description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows={3}
-          />
-        </div>
-        <Button type="submit" className="w-full">
-          Add Task
-        </Button>
-      </form>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Task title" {...field} className="mb-2" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Task description"
+                      {...field}
+                      rows={3}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <Button type="submit" className="w-full">
+            Add Task
+          </Button>
+        </form>
+      </Form>
     );
   };
 
