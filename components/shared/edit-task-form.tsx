@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "../ui/drawer";
 
 interface EditTaskDialogProps {
   open: boolean;
@@ -44,13 +45,9 @@ export function EditTaskDialog({
           });
         }
       }}
-      className="space-y-4"
+      className="space-y-6"
     >
-      <Input
-        name="title"
-        defaultValue={task?.title}
-        placeholder="Task title"
-      />
+      <Input name="title" defaultValue={task?.title} placeholder="Task title" />
       <Textarea
         name="description"
         defaultValue={task?.description}
@@ -65,14 +62,14 @@ export function EditTaskDialog({
 
   if (isMobile) {
     return (
-      <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="bottom" className="h-[400px]">
-          <SheetHeader>
-            <SheetTitle>Edit Task</SheetTitle>
-          </SheetHeader>
-          {task && <TaskForm />}
-        </SheetContent>
-      </Sheet>
+      <Drawer open={open} onOpenChange={onOpenChange}>
+        <DrawerContent className="">
+          <DrawerHeader>
+            <DrawerTitle>Edit Task</DrawerTitle>
+          </DrawerHeader>
+          <div className="p-4">{task && <TaskForm />} </div>
+        </DrawerContent>
+      </Drawer>
     );
   }
 
