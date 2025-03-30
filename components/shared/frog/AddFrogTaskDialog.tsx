@@ -29,7 +29,7 @@ import {
     const isMobile = useMediaQuery("(max-width: 640px)");
   
     const Content = () => (
-      <div className="">
+      <div className="space-y-5">
         <FrogTaskForm onSubmit={onSubmit} submitLabel="Add Task" />
       </div>
     );

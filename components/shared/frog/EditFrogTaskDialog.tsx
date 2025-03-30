@@ -42,7 +42,7 @@ export function EditTaskDialog({
   }, [open, onClose]);
 
   const Content = () => (
-    <div className="">
+    <div className="space-y-5">
       <FrogTaskForm
         defaultValues={{
           title: task?.title,
