@@ -48,6 +48,7 @@ import { QuadrantGridSkeleton } from "@/components/shared/loader";
 import RecommendationDialog from "@/components/shared/recommendation-dialog";
 import { toast } from "sonner";
 import Image from "next/image";
+import { EditTaskDialog } from "@/components/shared/edit-task-form";
 
 const initialQuadrants: QuadrantType[] = [
   {
@@ -245,7 +246,6 @@ export default function Home() {
         tasks: tasks.filter((t) => t.quadrant === q.id),
       }));
       setQuadrants(updatedQuadrants);
-
     }
   }, []);
 
@@ -589,42 +589,12 @@ export default function Home() {
             )}
           </div>
 
-          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-            <DialogContent className="sm:max-w-[425px] max-w-[calc(100vw-2rem)]">
-              <DialogHeader>
-                <DialogTitle>Edit Task</DialogTitle>
-              </DialogHeader>
-              {editingTask && (
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const formData = new FormData(e.currentTarget);
-                    handleUpdateTask({
-                      ...editingTask,
-                      title: formData.get("title") as string,
-                      description: formData.get("description") as string,
-                    });
-                  }}
-                  className="space-y-4"
-                >
-                  <Input
-                    name="title"
-                    defaultValue={editingTask.title}
-                    placeholder="Task title"
-                  />
-                  <Textarea
-                    name="description"
-                    defaultValue={editingTask.description}
-                    placeholder="Task description"
-                    rows={3}
-                  />
-                  <Button type="submit" className="w-full">
-                    Update Task
-                  </Button>
-                </form>
-              )}
-            </DialogContent>
-          </Dialog>
+          <EditTaskDialog
+            open={isEditDialogOpen}
+            onOpenChange={setIsEditDialogOpen}
+            task={editingTask}
+            onUpdate={handleUpdateTask}
+          />
         </div>
       </div>
       {reasonings.length > 0 && (
