@@ -468,11 +468,7 @@ export default function Home() {
 
   const moveToEatTheFrog = async () => {
     //get the task with the most urgent deadline
-    toast.info("This feature is coming soon!", {
-      description: "Stay tuned for updates!",
-      duration: 3000,
-    });
-    return;
+   
 
     try {
       // Get tasks from important-urgent quadrant

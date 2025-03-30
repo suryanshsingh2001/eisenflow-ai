@@ -252,175 +252,182 @@ export default function EatTheFrogPage() {
               </Button>
             </div>
           </div>
-
-          {topFrogs!.length > 0 && (
+            {topFrogs!.length > 0 && (
             <AnimatedContainer
               animation="slide"
               duration={0.4}
-              className="grid grid-cols-1 md:grid-cols-3 gap-4"
+              className="grid grid-cols-1 gap-4 w-full"
             >
               {topFrogs.map((task, index) => (
-                <Card
-                  key={task.id}
-                  className={`${
-                    index === 0
-                      ? "border-2 border-green-500 dark:border-green-700"
-                      : ""
-                  }`}
-                >
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      {index === 0 && (
-                        <AlertTriangle className="h-5 w-5 text-yellow-500" />
-                      )}
-                      {task.title}
-                    </CardTitle>
-                    <div className="flex gap-1 mt-2">
-                      {renderFrogIcons(task.priorityScore)}
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                      {task.description}
-                    </p>
-                    {task.reasoning && (
-                      <Alert className="mb-4">
-                        <Info className="h-4 w-4" />
-                        <AlertDescription>{task.reasoning}</AlertDescription>
-                      </Alert>
-                    )}
-                    <div className="flex gap-2">
-                      <Button onClick={() => completeTask(task.id)}>
-                        Complete
-                      </Button>
-                      <Button variant="outline" onClick={() => editTask(task)}>
-                        Edit
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+              <Card
+                key={task.id}
+                className={`${
+                index === 0
+                  ? "border-2 border-green-500 dark:border-green-700"
+                  : ""
+                }`}
+              >
+                <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                  {index === 0 && (
+                  <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500" />
+                  )}
+                  {task.title}
+                </CardTitle>
+                <div className="flex gap-1 mt-2">
+                  {renderFrogIcons(task.priorityScore)}
+                </div>
+                </CardHeader>
+                <CardContent>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  {task.description}
+                </p>
+                {task.reasoning && (
+                  <Alert className="mb-4">
+                  <Info className="h-4 w-4" />
+                  <AlertDescription className="text-sm">
+                    {task.reasoning}
+                  </AlertDescription>
+                  </Alert>
+                )}
+                <div className="flex flex-col sm:flex-row gap-2 w-full">
+                  <Button 
+                  onClick={() => completeTask(task.id)}
+                  className="w-full sm:w-auto"
+                  >
+                  Complete
+                  </Button>
+                  <Button 
+                  variant="outline" 
+                  onClick={() => editTask(task)}
+                  className="w-full sm:w-auto"
+                  >
+                  Edit
+                  </Button>
+                </div>
+                </CardContent>
+              </Card>
               ))}
             </AnimatedContainer>
-          )}
+            )}
 
-          <AnimatedContainer
+            <AnimatedContainer
             animation="scale"
             duration={0.4}
-            className="grid grid-cols-1 md:grid-cols-2 gap-8"
-          >
+            className="grid grid-cols-1 gap-8"
+            >
             <Card>
               <CardHeader>
-                <CardTitle>Active Tasks</CardTitle>
-                <CardDescription>Tasks waiting to be tackled</CardDescription>
+              <CardTitle>Active Tasks</CardTitle>
+              <CardDescription>Tasks waiting to be tackled</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {tasks
-                    .filter((task) => !task.completed)
-                    .map((task) => (
-                      <AnimatedContainer
-                        animation="scale"
-                        duration={0.4}
-                        key={task.id}
-                        className="p-4 rounded-lg border border-gray-200 dark:border-gray-700"
-                      >
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-medium">{task.title}</h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              {task.description}
-                            </p>
-                            <div className="mt-2 flex gap-2">
-                              <div className="flex gap-1">
-                                {renderFrogIcons(task.priorityScore)}
-                              </div>
-                            </div>
-                            {task.reasoning && (
-                              <Alert className="mt-2">
-                                <AlertDescription>
-                                  {task.reasoning}
-                                </AlertDescription>
-                              </Alert>
-                            )}
-                          </div>
-                          <div className="flex gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => editTask(task)}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => deleteTask(task.id)}
-                              className="text-red-500 hover:text-red-700"
-                            >
-                              Delete
-                            </Button>
-                          </div>
-                        </div>
-                      </AnimatedContainer>
-                    ))}
-                </div>
+              <div className="space-y-4">
+                {tasks
+                .filter((task) => !task.completed)
+                .map((task) => (
+                  <AnimatedContainer
+                  animation="scale"
+                  duration={0.4}
+                  key={task.id}
+                  className="p-4 rounded-lg border border-gray-200 dark:border-gray-700"
+                  >
+                  <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+                    <div className="w-full sm:flex-1">
+                    <h3 className="font-medium">{task.title}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {task.description}
+                    </p>
+                    <div className="mt-2 flex gap-2">
+                      <div className="flex gap-1 flex-wrap">
+                      {renderFrogIcons(task.priorityScore)}
+                      </div>
+                    </div>
+                    {task.reasoning && (
+                      <Alert className="mt-2">
+                      <AlertDescription>
+                        {task.reasoning}
+                      </AlertDescription>
+                      </Alert>
+                    )}
+                    </div>
+                    <div className="flex gap-2 w-full sm:w-auto">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => editTask(task)}
+                      className="flex-1 sm:flex-initial"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => deleteTask(task.id)}
+                      className="flex-1 sm:flex-initial text-red-500 hover:text-red-700"
+                    >
+                      Delete
+                    </Button>
+                    </div>
+                  </div>
+                  </AnimatedContainer>
+                ))}
+              </div>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  Completed Tasks
-                </CardTitle>
-                <CardDescription>
-                  Frogs you&apos;ve already eaten
-                </CardDescription>
+              <CardTitle className="flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-green-500" />
+                Completed Tasks
+              </CardTitle>
+              <CardDescription>
+                Frogs you&apos;ve already eaten
+              </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {tasks
-                    .filter((task) => task.completed)
-                    .sort(
-                      (a, b) =>
-                        new Date(b.completedAt!).getTime() -
-                        new Date(a.completedAt!).getTime()
-                    )
-                    .map((task) => (
-                      <div
-                        key={task.id}
-                        className="p-4 rounded-lg border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20"
-                      >
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-medium">{task.title}</h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              {task.description}
-                            </p>
-                            <div className="mt-2 flex gap-2">
-                              <div className="flex gap-1">
-                                {renderFrogIcons(task.priorityScore)}
-                              </div>
-                              <Badge variant="outline">
-                                Completed:{" "}
-                                {new Date(
-                                  task.completedAt!
-                                ).toLocaleDateString()}
-                              </Badge>
-                            </div>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => deleteTask(task.id)}
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            Delete
-                          </Button>
-                        </div>
+              <div className="space-y-4">
+                {tasks
+                .filter((task) => task.completed)
+                .sort(
+                  (a, b) =>
+                  new Date(b.completedAt!).getTime() -
+                  new Date(a.completedAt!).getTime()
+                )
+                .map((task) => (
+                  <div
+                  key={task.id}
+                  className="p-4 rounded-lg border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20"
+                  >
+                  <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+                    <div className="w-full sm:flex-1">
+                    <h3 className="font-medium">{task.title}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {task.description}
+                    </p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <div className="flex gap-1">
+                      {renderFrogIcons(task.priorityScore)}
                       </div>
-                    ))}
-                </div>
+                      <Badge variant="outline" className="whitespace-nowrap">
+                      Completed:{" "}
+                      {new Date(task.completedAt!).toLocaleDateString()}
+                      </Badge>
+                    </div>
+                    </div>
+                    <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => deleteTask(task.id)}
+                    className="w-full sm:w-auto text-red-500 hover:text-red-700"
+                    >
+                    Delete
+                    </Button>
+                  </div>
+                  </div>
+                ))}
+              </div>
               </CardContent>
             </Card>
           </AnimatedContainer>
