@@ -1,3 +1,4 @@
+import { FrogTask } from "@/app/frog/page";
 import { ParetoTask } from "@/app/pareto/page";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -87,4 +88,44 @@ export async function paretoAnalysis(tasks: ParetoTask[]) {
     .trim();
 
   return JSON.parse(text);
+}
+
+export async function frogAnalysis(tasks: FrogTask[]) {
+  try {
+    const prompt = `
+      Analyze these tasks and provide:
+      1. Suggested order of completion
+      2. Brief strategy for each task
+      
+      Consider:
+      - Task complexity and difficulty
+      - Dependencies between tasks
+      - Best practices for task management
+      - Energy levels required
+      
+      Tasks: ${JSON.stringify(tasks, null, 2)}
+      
+      Respond in this JSON format:
+      {
+        "analysis": [
+          {
+            "title": "task title",
+            "strategy": "brief strategy advice",
+            "priority": "explanation of why this order"
+          }
+        ]
+      }
+    `;
+
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const text = response
+      .text()
+      .replace(/```json\n|\n```/g, "")
+      .trim();
+
+    return JSON.parse(text);
+  } catch (error) {
+    console.error("Error analyzing tasks:", error);
+  }
 }

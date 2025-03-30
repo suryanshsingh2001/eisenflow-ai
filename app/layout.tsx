@@ -59,7 +59,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${lato.variable}  antialiased bg-background`}>
+      <body className={`${lato.variable}  antialiased min-h-screen bg-primary/10 p-4 sm:p-8`}>
         <Toaster richColors position="top-center" />
         {/* <Banner
           title="We are live on Peerlist"

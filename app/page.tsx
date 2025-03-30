@@ -469,7 +469,6 @@ export default function Home() {
 
   return (
     <>
-      <div className="min-h-screen bg-primary/10 p-4 sm:p-8">
         <div className="max-w-7xl mx-auto container">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-8">
             <div className="flex items-center gap-4 py-2">
@@ -601,7 +600,6 @@ export default function Home() {
             onUpdate={handleUpdateTask}
           />
         </div>
-      </div>
       {reasonings.length > 0 && (
         <Button
           onClick={() => setIsRecommendationDialogOpen(true)}
