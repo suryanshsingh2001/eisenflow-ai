@@ -463,12 +463,13 @@ export default function Home() {
 
   const exportTasks = () => {
     getPng();
-    toast.info("Generating image...");
+    toast.success("Export successful!", {
+      description: "Your tasks have been exported as an image.",
+    });
   };
 
   const moveToEatTheFrog = async () => {
     //get the task with the most urgent deadline
-   
 
     try {
       // Get tasks from important-urgent quadrant
@@ -566,14 +567,14 @@ export default function Home() {
                   </AlertDescription>
                 </div>
               </div>
-                <Button
+              <Button
                 variant="default"
                 className="mt-3 sm:mt-0 font-medium "
                 onClick={moveToEatTheFrog}
-                >
+              >
                 <ExternalLink className="h-4 w-4 mr-2" />
-                Eat the Frog (Coming Soon)
-                </Button>
+                Eat the Frog
+              </Button>
             </Alert>
           )}
 
