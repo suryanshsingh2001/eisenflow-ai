@@ -16,7 +16,6 @@ import { Quadrant as QuadrantType, Task } from "@/lib/types";
 import { TaskForm } from "./task-form";
 import { TaskCard } from "./task-card";
 import { AnimatedContainer } from "./animated-container";
-import { Icon } from "lucide-react";
 import React from "react";
 
 interface QuadrantProps {
@@ -51,9 +50,11 @@ export function Quadrant({
             </CardTitle>
             {icon}
           </div>
-          <div className="absolute right-4 md:right-6 top-4 md:top-6 text-sm md:text-base">
-            {taskCount} task{taskCount !== 1 ? "s" : ""}
-          </div>
+            <div className="absolute right-4 md:right-6 top-4 md:top-6">
+            <span className="inline-flex items-center justify-center px-2.5 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary">
+              {taskCount} task{taskCount !== 1 ? "s" : ""}
+            </span>
+            </div>
           <CardDescription className="text-sm md:text-base">
             {quadrant.description}
           </CardDescription>
