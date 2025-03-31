@@ -59,14 +59,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${lato.variable}  antialiased bg-background`}>
         <Toaster richColors position="top-center" />
         <Banner
           
         />
         {children}
+        <Footer />
       </body>
+      
      
     </html>
   );

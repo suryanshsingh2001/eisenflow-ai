@@ -24,7 +24,7 @@ export default function Component() {
             className="bg-primary/15 flex size-9 shrink-0 items-center justify-center rounded-full max-md:mt-0.5"
             aria-hidden="true"
           >
-            <RocketIcon className="opacity-80" size={16} />
+            <RocketIcon className="opacity-80 animate-pulse" size={16} />
           </div>
           <div className="flex grow flex-col justify-between gap-3 md:flex-row md:items-center">
             <div className="space-y-0.5">
@@ -32,7 +32,7 @@ export default function Component() {
                 We're live on Peerlist LaunchPad! 🎉
               </p>
               <p className="text-muted-foreground text-sm">
-                Give us a vote and help us reach more people!
+                Give us an upvote and help us reach more people!
               </p>
             </div>
             <div className="flex gap-2 max-md:flex-wrap">

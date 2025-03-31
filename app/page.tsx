@@ -572,7 +572,7 @@ export default function Home() {
                 className="mt-3 sm:mt-0 font-medium "
                 onClick={moveToEatTheFrog}
               >
-                <ExternalLink className="h-4 w-4 mr-2" />
+                <ExternalLink className="h-4 w-4" />
                 Eat the Frog
               </Button>
             </Alert>
