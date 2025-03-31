@@ -79,13 +79,15 @@ export default function InfoDialog() {
                     <Card className="border-2 border-primary/20 shadow-lg hover:border-primary/30 transition-all">
                         <CardHeader>
                             <CardTitle className="text-xl font-semibold text-primary">
-                                Coming Soon
+                                Eat the Frog
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <p className="text-muted-foreground leading-relaxed">
-                                We're working on adding more productivity tools and features to
-                                help you manage your time even better. Stay tuned for updates!
+                                "Eat the Frog" is a productivity concept that suggests tackling
+                                your most challenging or important task first thing in the
+                                morning. By doing so, you set a positive tone for the rest of
+                                your day and build momentum.
                             </p>
                         </CardContent>
                     </Card>
