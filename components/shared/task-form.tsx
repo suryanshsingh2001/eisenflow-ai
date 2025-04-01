@@ -40,8 +40,8 @@ interface TaskFormProps {
 import * as z from "zod"
 
 export const taskFormSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string(),
+  title: z.string().min(1, "Title is required").max(50, "Title is too long"),
+  description: z.string().max(200, "Description is too long"),
   quadrant: z.enum(["important-urgent" , "important-not-urgent" , "not-important-urgent" , "not-important-not-urgent" , "done"])
 })
 

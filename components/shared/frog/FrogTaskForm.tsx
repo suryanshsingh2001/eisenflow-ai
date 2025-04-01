@@ -15,8 +15,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { FrogSelector } from "./FrogSelector"
 
 const taskFormSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string(),
+  title: z.string().min(1, "Title is required").max(50, "Title is too long"),
+  description: z.string().max(200, "Description is too long"),
   priorityScore: z.number().min(1).max(5),
 })
 
