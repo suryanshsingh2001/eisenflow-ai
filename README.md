@@ -1,3 +1,4 @@
+<div align="center">
 
 # Eisenflow
 
@@ -8,11 +9,15 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4-blue.svg)](https://tailwindcss.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Stop drowning in tasks. Start making decisions that matter.**
+**Prioritize Smarter, Act Faster with AI.**
 
 [Live Demo](#) · [Report Bug](#) · [Request Feature](#) · [Contribute](#)
 
+<img width="1000" height="800" alt="eisenflow-og" src="https://github.com/user-attachments/assets/277628ec-acff-4506-bc9c-d4dea9c5200c" />
+
 ---
+</div>
+
 
 ## 📖 About Eisenflow
 
@@ -310,3 +315,5 @@ This project is licensed under the [MIT License](LICENSE). Feel free to use, mod
 [⬆ back to top](#eisenflow)
 
 </div>
+
+
