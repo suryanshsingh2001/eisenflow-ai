@@ -15,6 +15,14 @@
 
 <img width="1000" height="800" alt="eisenflow-og" src="https://github.com/user-attachments/assets/277628ec-acff-4506-bc9c-d4dea9c5200c" />
 
+<a href="https://peerlist.io/surydev/project/eisenflow" target="_blank" rel="noreferrer">
+				<img
+					src="https://peerlist.io/api/v1/projects/embed/PRJHMQLE77L8MOQRQF6BG6MA6ADBL9?showUpvote=true&theme=dark"
+					alt="Eisenflow"
+					style="width: auto; height: 72px;"
+				/>
+			</a>
+            
 ---
 </div>
 
@@ -254,9 +262,9 @@ Yes! Eisenflow works offline for all core features. AI categorization requires a
 
 **Additional Technologies:**
 - **UI Components:** shadcn/ui
-- **Drag & Drop:** dnd-kit
+- **AI Processing:** Google Gemini Flash
+- **Rate Limiting:** Arcjet
 - **Icons:** Lucide React
-- **State Management:** React Hooks
 
 ---
 
@@ -291,21 +299,21 @@ This project is licensed under the [MIT License](LICENSE). Feel free to use, mod
 
 ## 📬 Connect & Support
 
-**Maintainer:** [Your Name](#)
+**Maintainer:** [Suryansh Singh](https://www.linkedin.com/in/suryanshsingh2001/)
 
-**Website:** [eisenflow.com](#)
+**Website:** [eisenflow.com](https://eisenflow.surydev.site/)
 
-**Issues:** [GitHub Issues](#)
+**Issues:** [GitHub Issues](https://github.com/suryanshsingh2001/eisenflow-ai/issues)
 
 ---
 
 ## 🙏 Acknowledgments
 
-- Inspired by the Eisenhower Matrix productivity framework
 - Built with ❤️ using [Next.js](https://nextjs.org/) and [shadcn/ui](https://ui.shadcn.com/)
+- Powered by [Google Gemini](https://deepmind.google/technologies/gemini/)
 - Icons provided by [Lucide](https://lucide.dev/)
-- Thanks to the productivity community for constant inspiration
-
+- Rate limiting by [Arcjet](https://arcjet.com/)
+- Inspired by the amazing developer community
 ---
 
 <div align="center">
