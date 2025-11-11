@@ -11,7 +11,7 @@
 
 **Prioritize Smarter, Act Faster with AI.**
 
-[Live Demo](#) · [Report Bug](#) · [Request Feature](#) · [Contribute](#)
+[Live Demo](https://eisenflow.surydev.site/) · [Report Bug](https://github.com/suryanshsingh2001/eisenflow-ai/issues) · [Request Feature](https://github.com/suryanshsingh2001/eisenflow-ai/issues) · [Contribute](CONTRIBUTING.md)
 
 <img width="1000" height="800" alt="eisenflow-og" src="https://github.com/user-attachments/assets/277628ec-acff-4506-bc9c-d4dea9c5200c" />
 
