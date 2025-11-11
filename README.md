@@ -144,7 +144,7 @@ The Eisenhower Matrix is a proven time management framework that helps you prior
 
 ## 🤝 Contributing
 
-We welcome contributions from developers of all skill levels!
+We love contributions from developers of all skill levels! DevMD is proudly participating in **Hacktoberfest 2025** 🎃
 
 ### Ways to Contribute
 
@@ -154,28 +154,28 @@ We welcome contributions from developers of all skill levels!
 
 **🐛 Bug Fixes**
 
-Find and fix issues
+Find and fix issues labeled [`bug`](https://github.com/suryanshsingh2001/eisenflow-ai/labels/bug)
 
 </td>
 <td width="25%">
 
 **✨ New Features**
 
-Build productivity tools
+Build features labeled [`enhancement`](https://github.com/suryanshsingh2001/eisenflow-ai/labels/enhancement)
 
 </td>
 <td width="25%">
 
 **📚 Documentation**
 
-Improve guides
+Improve docs labeled [`documentation`](https://github.com/suryanshsingh2001/eisenflow-ai/labels/documentation)
 
 </td>
 <td width="25%">
 
 **🎨 UI/UX**
 
-Enhance design
+Enhance design labeled [`ui/ux`](https://github.com/suryanshsingh2001/eisenflow-ai/labels/ui)
 
 </td>
 </tr>
@@ -259,6 +259,7 @@ Yes! Eisenflow works offline for all core features. AI categorization requires a
 </td>
 </tr>
 </table>
+
 
 **Additional Technologies:**
 - **UI Components:** shadcn/ui
