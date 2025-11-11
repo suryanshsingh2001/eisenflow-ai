@@ -89,10 +89,10 @@ Before you begin, ensure you have:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/eisenflow.git
+git clone https://github.com/suryanshsingh2001/eisenflow-ai.git
 
 # Navigate to project directory
-cd eisenflow
+cd eisenflow-ai
 
 # Install dependencies
 npm install
@@ -105,12 +105,21 @@ yarn install
 Create a `.env.local` file in the root directory:
 
 ```env
-# Optional: Your AI API key for task categorization
-AI_API_KEY=your_api_key_here
+# Required: Your Gemini API key
+GEMINI_API_KEY=your_gemini_api_key_here
 
-# App configuration
-NEXT_PUBLIC_MAX_TASKS=50
+# Optional: Arcjet for rate limiting
+ARCJET_KEY=your_arcjet_key_here
+
+# Rate limiting configuration
+RATE_LIMIT_ENABLED=true  # Set to 'false' to disable in development
+MAX_REQUESTS=20
+
+# Character limit per conversion
+NEXT_PUBLIC_MAX_CHARACTERS=5000
 ```
+
+> **Note:** Set `RATE_LIMIT_ENABLED=false` during local development to disable rate limiting.
 
 ### Running the Application
 
@@ -121,7 +130,7 @@ npm run dev
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to start using Eisenflow.
+Open [http://localhost:3000](http://localhost:3000) in your browser to start using DevMD.
 
 ---
 
@@ -144,7 +153,7 @@ The Eisenhower Matrix is a proven time management framework that helps you prior
 
 ## 🤝 Contributing
 
-We love contributions from developers of all skill levels! DevMD is proudly participating in **Hacktoberfest 2025** 🎃
+We love contributions from developers of all skill levels! Eisenflow is proudly participating in **Hacktoberfest 2025** 🎃
 
 ### Ways to Contribute
 
@@ -181,13 +190,52 @@ Enhance design labeled [`ui/ux`](https://github.com/suryanshsingh2001/eisenflow-
 </tr>
 </table>
 
+
+### Contribution Guidelines
+
+✅ **Do:**
+- Write meaningful commit messages
+- Add tests for new features
+- Update documentation when needed
+- Follow the existing code style
+- Be respectful and collaborative
+
+❌ **Don't:**
+- Submit untested code
+- Make unrelated changes in one PR
+- Ignore feedback from maintainers
+
+Read our [Contributing Guidelines](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md) for more details.
+
+### 📋 Issue Templates
+
+Use our templates when creating issues:
+
+- [🐛 Bug Report](.github/ISSUE_TEMPLATE/bug_report.md)
+- [✨ Feature Request](.github/ISSUE_TEMPLATE/feature_request.md)
+- [📝 Pull Request](.github/PULL_REQUEST_TEMPLATE.md)
+
+### 🎃 Hacktoberfest 2025
+
+Contributing during October? Your PRs count toward Hacktoberfest!
+
+**Ground Rules:**
+1. Contributions must add real value
+2. Test thoroughly before submitting
+3. Follow project standards
+4. Be patient and respectful
+
+Check out [good first issues](https://github.com/suryanshsingh2001/eisenflow-ai/labels/good%20first%20issue) to get started!
+
+---
+
 ### Getting Started
 
 ```bash
 # 1. Fork the repository on GitHub
 
 # 2. Clone your fork
-git clone https://github.com/YOUR_USERNAME/eisenflow.git
+git clone https://github.com/YOUR_USERNAME/eisenflow-ai.git
 
 # 3. Create a feature branch
 git checkout -b feature/amazing-feature
@@ -288,8 +336,6 @@ Yes! Eisenflow works offline for all core features. AI categorization requires a
 - [ ] **Custom Categories** – Beyond the traditional matrix
 - [ ] **Voice Input** – Add tasks hands-free
 
-Have ideas? [Share them with us!](#)
-
 ---
 
 ## 📄 License
@@ -302,7 +348,7 @@ This project is licensed under the [MIT License](LICENSE). Feel free to use, mod
 
 **Maintainer:** [Suryansh Singh](https://www.linkedin.com/in/suryanshsingh2001/)
 
-**Website:** [eisenflow.com](https://eisenflow.surydev.site/)
+**Website:** [eisenflow.surydev.site](https://eisenflow.surydev.site/)
 
 **Issues:** [GitHub Issues](https://github.com/suryanshsingh2001/eisenflow-ai/issues)
 
