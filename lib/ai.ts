@@ -3,6 +3,7 @@ import { ParetoTask } from "@/app/pareto/page";
 import { GoogleGenAI } from "@google/genai";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
@@ -32,7 +33,7 @@ Respond only with valid JSON matching the specified format.`;
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: GEMINI_MODEL,
       contents: prompt,
     });
     if (!response.text) {
@@ -82,7 +83,7 @@ export async function paretoAnalysis(tasks: ParetoTask[]) {
 `;
 
   const result = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: GEMINI_MODEL,
     contents: prompt,
   });
   if (!result.text) {
@@ -117,7 +118,7 @@ export async function frogAnalysis(tasks: FrogTask[]) {
   Respond only with valid JSON matching the specified format, sorted by priorityScore descending.`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: GEMINI_MODEL,
       contents: prompt,
     });
 
