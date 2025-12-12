@@ -1,14 +1,11 @@
 import { FrogTask } from "@/app/frog/page";
 import { ParetoTask } from "@/app/pareto/page";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? "");
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
-console.log(
-  "Using model:",
-  genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
-);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
 export async function categorizeTasks(
   tasks: { title: string; description: string }[]
@@ -35,13 +32,18 @@ ${JSON.stringify(sanitizedTasks, null, 2)}
 Respond only with valid JSON matching the specified format.`;
 
   try {
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response
-      .text()
+    const response = await ai.models.generateContent({
+      model: GEMINI_MODEL,
+      contents: prompt,
+    });
+    if (!response.text) {
+      throw new Error("No response text from AI model");
+    }
+    const santizedResponse = response.text
       .replace(/```json\n|\n```/g, "")
       .trim();
-    return JSON.parse(text);
+
+    return JSON.parse(santizedResponse);
   } catch (error) {
     console.error("Error categorizing tasks:", error);
     return tasks.map(() => ({
@@ -80,21 +82,25 @@ export async function paretoAnalysis(tasks: ParetoTask[]) {
   }
 `;
 
-  const result = await model.generateContent(prompt);
-  const response = result.response;
-  const text = response
-    .text()
-    .replace(/```json\n|\n```/g, "")
-    .trim();
+  const result = await ai.models.generateContent({
+    model: GEMINI_MODEL,
+    contents: prompt,
+  });
+  if (!result.text) {
+    throw new Error("No response text from AI model");
+  }
+  const response = result.text;
+  const sanitizedText = response.replace(/```json\n|\n```/g, "").trim();
 
-  return JSON.parse(text);
+  console.error("Pareto Analysis Response:", sanitizedText);
+  return JSON.parse(sanitizedText);
 }
 
 export async function frogAnalysis(tasks: FrogTask[]) {
   try {
-    const sanitizedTasks = tasks.map(task => ({
+    const sanitizedTasks = tasks.map((task) => ({
       title: String(task.title).replace(/[^\w\s-]/g, ""),
-      description: String(task.description).replace(/[^\w\s-]/g, "")
+      description: String(task.description).replace(/[^\w\s-]/g, ""),
     }));
 
     const prompt = `You are a task prioritization assistant.
@@ -111,15 +117,18 @@ export async function frogAnalysis(tasks: FrogTask[]) {
 
   Respond only with valid JSON matching the specified format, sorted by priorityScore descending.`;
 
-    const result = await model.generateContent(prompt);
-    const response = result.response;
-    const text = response
-      .text()
-      .replace(/```json\n|\n```/g, "")
-      .trim();
+    const response = await ai.models.generateContent({
+      model: GEMINI_MODEL,
+      contents: prompt,
+    });
 
+    if (!response.text) {
+      throw new Error("No response text from AI model");
+    }
 
-      console.error("Response text:", text);
+    const text = response.text.replace(/```json\n|\n```/g, "").trim();
+
+    console.error("Response text:", text);
     return JSON.parse(text);
   } catch (error) {
     console.error("Error analyzing tasks:", error);

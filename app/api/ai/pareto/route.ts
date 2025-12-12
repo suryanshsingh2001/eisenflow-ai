@@ -1,5 +1,4 @@
 import { paretoAnalysis } from "@/lib/ai";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
